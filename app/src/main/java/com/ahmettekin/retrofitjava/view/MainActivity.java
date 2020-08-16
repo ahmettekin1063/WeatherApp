@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         //https://api.nomics.com/v1/prices?key=d58e4dc4e10e1b73538d6d41f61ba0b1
 
 
-        Gson gson = new GsonBuilder().setLenient().create();
+      /*  Gson gson = new GsonBuilder().setLenient().create();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     for ( CryptoModel cryptoModel : cryptoModels){
                         System.out.println(cryptoModel.currency);
                         System.out.println(cryptoModel.price);
-                    }
+                    }*/
                 }
             }
 

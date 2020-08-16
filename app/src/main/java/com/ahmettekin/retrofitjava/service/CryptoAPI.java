@@ -12,7 +12,7 @@ public interface CryptoAPI {
     //https://api.nomics.com/v1/prices?key=d58e4dc4e10e1b73538d6d41f61ba0b1
 
 
-    @GET("prices?key=d58e4dc4e10e1b73538d6d41f61ba0b1")
-    Call<List<CryptoModel>> getData();
+ /*   @GET("prices?key=d58e4dc4e10e1b73538d6d41f61ba0b1")
+    Call<List<CryptoModel>> getData();*/
 
 }
