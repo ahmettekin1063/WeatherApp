@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerViewAdapter recyclerViewAdapter;
 
-    CompositeDisposable compositeDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -61,59 +59,38 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void loadData(){
+    private void loadData() {
 
         final CryptoAPI cryptoAPI = retrofit.create(CryptoAPI.class);
 
-        compositeDisposable = new CompositeDisposable();
-
-        compositeDisposable.add(cryptoAPI.getData()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleResponse));
-
-        /*
         Call<List<CryptoModel>> call = cryptoAPI.getData();
+
         call.enqueue(new Callback<List<CryptoModel>>() {
             @Override
             public void onResponse(Call<List<CryptoModel>> call, Response<List<CryptoModel>> response) {
                 if (response.isSuccessful()) {
                     List<CryptoModel> responseList = response.body();
                     cryptoModels = new ArrayList<>(responseList);
+
                     //RecyclerView
                     recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                     recyclerViewAdapter = new RecyclerViewAdapter(cryptoModels);
                     recyclerView.setAdapter(recyclerViewAdapter);
-                    for (CryptoModel cryptoModel : cryptoModels) {
+                   /* for (CryptoModel cryptoModel : cryptoModels) {
                         System.out.println(cryptoModel.currency);
                         System.out.println(cryptoModel.price);
-                    }
+                    }*/
                 }
             }
+
             @Override
             public void onFailure(Call<List<CryptoModel>> call, Throwable t) {
                 t.printStackTrace();
             }
         });
-*/
-
-    }
 
 
-    private void handleResponse(List<CryptoModel> cryptoModelList) {
-        cryptoModels = new ArrayList<>(cryptoModelList);
-
-        //RecyclerView
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-        recyclerViewAdapter = new RecyclerViewAdapter(cryptoModels);
-        recyclerView.setAdapter(recyclerViewAdapter);
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        compositeDisposable.clear();
     }
 }
+
+

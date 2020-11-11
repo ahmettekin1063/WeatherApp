@@ -18,6 +18,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private ArrayList<CryptoModel> cryptoList;
 
+
+
     private String[] colors = {"#a3ff00","#ff00aa","#b4a7d6","#a4c2f4","#8ee5ee","#cd950c","#f5f5f5","#f47932"};
 
     public RecyclerViewAdapter(ArrayList<CryptoModel> cryptoList) {
