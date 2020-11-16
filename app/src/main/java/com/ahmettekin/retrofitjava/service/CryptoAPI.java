@@ -15,8 +15,9 @@ public interface CryptoAPI {
 
 
   @GET("prices?key=d58e4dc4e10e1b73538d6d41f61ba0b1")
-  //Observable<List<CryptoModel>> getData();
 
-  Call<List<CryptoModel>> getData();
+    Observable<List<CryptoModel>> getData();
+
+    //Call<List<CryptoModel>> getData();
 
 }
