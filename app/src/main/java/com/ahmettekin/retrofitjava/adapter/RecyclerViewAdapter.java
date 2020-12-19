@@ -10,20 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahmettekin.retrofitjava.R;
-import com.ahmettekin.retrofitjava.model.CryptoModel;
+import com.ahmettekin.retrofitjava.model.WeatherModel.WeatherItem;
 
 import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RowHolder> {
 
-    private ArrayList<CryptoModel> cryptoList;
+    private ArrayList<WeatherItem> weatherItemList;
 
 
 
     private String[] colors = {"#a3ff00","#ff00aa","#b4a7d6","#a4c2f4","#8ee5ee","#cd950c","#f5f5f5","#f47932"};
 
-    public RecyclerViewAdapter(ArrayList<CryptoModel> cryptoList) {
-        this.cryptoList = cryptoList;
+    public RecyclerViewAdapter(ArrayList<WeatherItem> weatherItemList) {
+        this.weatherItemList = weatherItemList;
     }
 
 
@@ -38,29 +38,29 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.RowHolder holder, int position) {
-        holder.bind(cryptoList.get(position),colors,position);
+        holder.bind(weatherItemList.get(position),colors,position);
     }
 
     @Override
     public int getItemCount() {
-        return cryptoList.size();
+        return weatherItemList.size();
     }
 
     public class RowHolder extends RecyclerView.ViewHolder {
 
-        TextView textName;
-        TextView textPrice;
+        TextView tvWeatherDescription;
+        TextView tvWeatherTemp;
 
         public RowHolder(@NonNull View itemView) {
             super(itemView);
         }
 
-        public void bind(CryptoModel cryptoModel,String[] colors, Integer position) {
+        public void bind(WeatherItem weatherItem, String[] colors, Integer position) {
             itemView.setBackgroundColor(Color.parseColor(colors[position % 8]));
-            textName = itemView.findViewById(R.id.text_name);
-            textPrice = itemView.findViewById(R.id.text_price);
-            textName.setText(cryptoModel.currency);
-            textPrice.setText(cryptoModel.price);
+            tvWeatherDescription = itemView.findViewById(R.id.tvWeatherDescription);
+            tvWeatherTemp = itemView.findViewById(R.id.tvWeatherTemp);
+            tvWeatherDescription.setText(weatherItem.getWeather()[0].getMain());
+            tvWeatherTemp.setText(String.valueOf(weatherItem.getMain().getTemp()));
 
         }
     }

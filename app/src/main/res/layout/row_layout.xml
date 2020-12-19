@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/text_name"
+        android:id="@+id/tvWeatherDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
@@ -21,7 +21,7 @@
         />
 
     <TextView
-        android:id="@+id/text_price"
+        android:id="@+id/tvWeatherTemp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
