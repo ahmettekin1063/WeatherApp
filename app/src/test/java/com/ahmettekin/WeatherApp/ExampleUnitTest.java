@@ -1,4 +1,4 @@
-package com.ahmettekin.retrofitjava;
+package com.ahmettekin.WeatherApp;
 
 import org.junit.Test;
 

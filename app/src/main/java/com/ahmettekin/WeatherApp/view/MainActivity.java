@@ -1,35 +1,31 @@
-package com.ahmettekin.retrofitjava.view;
+package com.ahmettekin.WeatherApp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.database.CrossProcessCursor;
+
 import android.os.Bundle;
 
-import com.ahmettekin.retrofitjava.R;
-import com.ahmettekin.retrofitjava.adapter.RecyclerViewAdapter;
-import com.ahmettekin.retrofitjava.model.CryptoModel;
-import com.ahmettekin.retrofitjava.service.CryptoAPI;
+import com.ahmettekin.WeatherApp.R;
+import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
+import com.ahmettekin.WeatherApp.model.WeatherModel;
+import com.ahmettekin.WeatherApp.service.WeatherAPI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<CryptoModel> cryptoModels;
-    private String BASE_URL = "https://api.nomics.com/v1/";
+    ArrayList<WeatherModel.WeatherItem> weatherItems;
+    private String BASE_URL = "http://api.openweathermap.org/data/2.5/";
     Retrofit retrofit;
     RecyclerView recyclerView;
     RecyclerViewAdapter recyclerViewAdapter;
@@ -64,10 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadData() {
 
-        final CryptoAPI cryptoAPI = retrofit.create(CryptoAPI.class);
+        final WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
+
 
         compositeDisposable = new CompositeDisposable();
-        compositeDisposable.add(cryptoAPI.getData()
+        compositeDisposable.add(weatherAPI.getWeatherData()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::handleResponse)
@@ -101,13 +98,13 @@ public class MainActivity extends AppCompatActivity {
 
 */
     }
-    public void handleResponse (List<CryptoModel> cryptoModelList){
+    public void handleResponse (WeatherModel weatherModel){
 
-        cryptoModels = new ArrayList<>(cryptoModelList);
+        this.weatherItems = weatherModel.weatherItems;
 
         //RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-        recyclerViewAdapter = new RecyclerViewAdapter(cryptoModels);
+        recyclerViewAdapter = new RecyclerViewAdapter(this.weatherItems);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
