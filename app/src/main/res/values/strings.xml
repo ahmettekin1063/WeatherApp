@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">RetrofitJava</string>
+    <string name="app_name">WeatherApp</string>
+    <string name="todo">TODO</string>
 </resources>

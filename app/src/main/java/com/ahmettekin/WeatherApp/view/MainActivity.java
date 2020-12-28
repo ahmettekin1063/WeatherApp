@@ -1,4 +1,4 @@
-package com.ahmettekin.retrofitjava.view;
+package com.ahmettekin.WeatherApp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -6,15 +6,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
-import com.ahmettekin.retrofitjava.R;
-import com.ahmettekin.retrofitjava.adapter.RecyclerViewAdapter;
-import com.ahmettekin.retrofitjava.model.WeatherModel;
-import com.ahmettekin.retrofitjava.service.WeatherAPI;
+import com.ahmettekin.WeatherApp.R;
+import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
+import com.ahmettekin.WeatherApp.model.WeatherModel;
+import com.ahmettekin.WeatherApp.service.WeatherAPI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void handleResponse (WeatherModel weatherModel){
 
-        this.weatherItems = weatherModel.getWeatherItems();
+        this.weatherItems = weatherModel.weatherItems;
 
         //RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
