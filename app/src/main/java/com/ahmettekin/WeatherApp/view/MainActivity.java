@@ -33,10 +33,12 @@ public class MainActivity extends AppCompatActivity {
     CompositeDisposable compositeDisposable;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         //https://api.nomics.com/v1/prices?key=2187154b76945f2373394aa34f7dc98a
 
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         loadData();
 
     }
+
+
 
     private void loadData() {
 
