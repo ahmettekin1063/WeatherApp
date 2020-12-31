@@ -1,8 +1,7 @@
 package com.ahmettekin.WeatherApp.adapter;
 
+
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.drawable.Icon;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,30 +9,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.model.MistTypes;
-import com.ahmettekin.WeatherApp.model.WeatherImageTypes;
 import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
 import com.ahmettekin.WeatherApp.model.WeatherTypes;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
-import retrofit2.http.GET;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RowHolder> {
 
     private final ArrayList<WeatherItem> weatherItemList;
-
-
-    private final String[] colors = {"#afeeee", "#1e90ff", "#7fffd4", "01d"};
-
-    private final int[] drawables = {R.drawable.mist, R.drawable.snow, R.drawable.rain, R.drawable.clouds,
-            R.drawable.clear, R.drawable.thunderstorm, R.drawable.drizzle, R.drawable.unknown};
 
 
     public RecyclerViewAdapter(ArrayList<WeatherItem> weatherItemList) {
@@ -44,10 +33,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @NonNull
     @Override
     public RowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
 
         View view = layoutInflater.inflate(R.layout.row_layout, parent, false);
         return new RowHolder(view);
+
     }
 
 
@@ -74,90 +65,47 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(itemView);
         }
 
-
-
+        @SuppressLint("SetTextI18n")
         public void bind(WeatherItem weatherItem) {
 
             tvWeatherDescription = itemView.findViewById(R.id.tvWeatherDescription);
             tvWeatherTemp = itemView.findViewById(R.id.tvWeatherTemp);
             tvSky = itemView.findViewById(R.id.tvSky);
-            itemView.setBackgroundResource(getSkyId(weatherItem.getWeather()[0].getMain()));
-            System.out.println(weatherItem.getWeather()[0].getMain());
             imageView = itemView.findViewById(R.id.imageView);
 
+            itemView.setBackgroundResource(getSkyId(weatherItem.getWeather()[0].getMain()));
             tvWeatherDescription.setText(weatherItem.getName());
             tvWeatherTemp.setText("Sıcaklık : " + weatherItem.getMain().getTemp() + " \u2103");
             tvSky.setText("Gökyüzü : " + UpperCaseWords(weatherItem.getWeather()[0].getDescription()));
-//String.format("Sıcaklık: %s",weatherItem.getMain().getTemp() )
+
             String iconURL = "http://openweathermap.org/img/wn/" + weatherItem.getWeather()[0].getIcon() + "@2x.png";
 
             Picasso.get().load(iconURL).into(imageView);
 
-
-
-
         }
 
 
-
-        /*
-        Aşağıdaki metotta gelen kelimeye göre döndürülen değer, resimlerin bulunduğu
-        dizinin indeksini verir.Bu sayede bu indekse göre uygun olan resim seçilmiş olur.
-        Resimler de drawables int dizisinin içindedir.
-         */
-
-        /*  public int getSky(String main){
-
-              for (String hava : sisliHavalar){
-                  if(main.matches(hava)) return 0;
-              }
-              if(main.matches("Snow")) return 1;
-              else if(main.matches("Rain")) return 2;
-              else if(main.matches("Clouds")) return 3;
-              else if(main.matches("Clear"))  return 4;
-              else if(main.matches("Thunderstorm")) return 5;
-              else if(main.matches("Drizzle")) return 6;
-
-
-              else return 7;
-
-          }*/
         public int getSkyId(String main) {
 
+            int picture = WeatherTypes.unknown.getValue();
             for (MistTypes mistType : MistTypes.values()) {
-                if (main.matches(mistType.getMistType())) return WeatherImageTypes.mist.getValue();
-            }
-            if (main.matches(WeatherTypes.snow.getWeatherType()))
-                //weathertype ile weatherimage ile birleştir.
-                return WeatherImageTypes.snow.getValue();
-
-          /*  if(main.matches(WeatherTypes.snow.getWeatherType()))
-                return WeatherTypes.snow.value();*/
-
-            else if (main.matches(WeatherTypes.clouds.getWeatherType()))
-                return WeatherImageTypes.clouds.getValue();
-
-            else if (main.matches(WeatherTypes.clear.getWeatherType()))
-                return WeatherImageTypes.clear.getValue();
-
-            else if (main.matches(WeatherTypes.thunderstorm.getWeatherType()))
-                return WeatherImageTypes.tunderstorm.getValue();
-
-            else if (main.matches(WeatherTypes.drizzle.getWeatherType()))
-                return WeatherImageTypes.drizzle.getValue();
-
-            else if (main.matches(WeatherTypes.rain.getWeatherType())) {
-                return WeatherImageTypes.rain.getValue();
-            } else {
-                return WeatherImageTypes.unknown.getValue();
+                if (main.matches(mistType.getMistType())) {
+                    picture = WeatherTypes.mist.getValue();
+                }
             }
 
+            for (WeatherTypes temp : WeatherTypes.values()) {
+                if (main.matches(temp.getWeatherType())) {
+                    picture = temp.getValue();
+                }
+            }
+            return picture;
 
         }
 
-        //Gelen cümledeki kelimelerin sadece ilk harfleri büyük olacak formata dönüştüren metot
 
         public String UpperCaseWords(String line) {
+
             line = line.trim().toLowerCase();
             String data[] = line.split("\\s");
             line = "";
@@ -168,8 +116,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     line = line + data[i].toUpperCase();
             }
             return line.trim();
+
         }
-
-
     }
 }

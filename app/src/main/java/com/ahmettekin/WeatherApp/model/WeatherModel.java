@@ -9,12 +9,8 @@ public class WeatherModel {
     @SerializedName("list")
     public ArrayList<WeatherItem> weatherItems;
 
-  //  public ArrayList<WeatherItem> getWeatherItems() {
-   //     return weatherItems;
-   // }
 
-
-    public class WeatherItem{
+    public class WeatherItem {
 
         private Weather[] weather;
 
@@ -37,7 +33,6 @@ public class WeatherModel {
         }
 
 
-
         public class Weather {
             private long id;
             private String main;
@@ -50,11 +45,13 @@ public class WeatherModel {
             }
 
             public String getMain() {
-            return main;
+                return main;
             }
+
             public String getDescription() {
                 return description;
             }
+
             public String getIcon() {
                 return icon;
             }
@@ -77,18 +74,23 @@ public class WeatherModel {
             public double getTemp() {
                 return temp;
             }
+
             public double getFeelsLike() {
                 return feelsLike;
             }
+
             public double getTempMin() {
                 return tempMin;
             }
+
             public double getTempMax() {
                 return tempMax;
             }
+
             public double getPressure() {
                 return pressure;
             }
+
             public double getHumidity() {
                 return humidity;
             }
@@ -96,7 +98,6 @@ public class WeatherModel {
         }
 
     }
-
 
 
 }
