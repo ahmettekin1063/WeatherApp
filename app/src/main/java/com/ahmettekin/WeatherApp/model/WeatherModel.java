@@ -52,7 +52,7 @@ public class WeatherModel {
                 }
 
                 for (WeatherTypes temp : WeatherTypes.values()) {
-                    if (getMain().matches(temp.getWeatherType())) {
+                    if (main.matches(temp.getWeatherType())) {
                         picture = temp.getWeatherImage();
 
                     }
