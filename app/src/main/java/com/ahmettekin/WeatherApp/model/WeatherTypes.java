@@ -4,26 +4,28 @@ import com.ahmettekin.WeatherApp.R;
 
 public enum WeatherTypes {
     mist("Mist",R.drawable.mist), snow("Snow", R.drawable.snow), rain("Rain",R.drawable.rain),
-    clouds("Clouds",R.drawable.clouds), clear("Clear",R.drawable.clear), thunderstorm("Thunderstorm",R.drawable.thunderstorm),
-    drizzle("Drizzle",R.drawable.drizzle),unknown(R.drawable.unknown);
+    clouds("Clouds",R.drawable.clouds), clear("Clear",R.drawable.clear),
+    thunderstorm("Thunderstorm",R.drawable.thunderstorm),
+    drizzle("Drizzle",R.drawable.drizzle),
+    unknown(R.drawable.unknown);
 
     private String weatherType = "null";
-    private final int value;
+    private final int weatherImage;
 
-    public int getValue() {
-        return value;
+    public int getWeatherImage() {
+        return weatherImage;
     }
 
     public String getWeatherType() {
         return weatherType;
     }
 
-    WeatherTypes(String weatherType, int value) {
+    WeatherTypes(String weatherType, int weatherImage) {
         this.weatherType = weatherType;
-        this.value=value;
+        this.weatherImage = weatherImage;
     }
 
-    WeatherTypes(int value) {
-        this.value=value;
+    WeatherTypes(int weatherImage) {
+        this.weatherImage = weatherImage;
     }
 }

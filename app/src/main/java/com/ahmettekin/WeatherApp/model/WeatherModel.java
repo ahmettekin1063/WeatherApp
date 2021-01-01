@@ -40,11 +40,34 @@ public class WeatherModel {
             private String icon;
 
 
+            public int getSkyId() {
+
+
+                int picture = WeatherTypes.unknown.getWeatherImage();
+                for (MistTypes mistType : MistTypes.values()) {
+                    if (main.matches(mistType.getMistType())) {
+                        picture = WeatherTypes.mist.getWeatherImage();
+
+                    }
+                }
+
+                for (WeatherTypes temp : WeatherTypes.values()) {
+                    if (getMain().matches(temp.getWeatherType())) {
+                        picture = temp.getWeatherImage();
+
+                    }
+                }
+                return picture;
+
+            }
+
+
             public long getId() {
                 return id;
             }
 
             public String getMain() {
+
                 return main;
             }
 

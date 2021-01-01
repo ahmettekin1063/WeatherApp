@@ -73,7 +73,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             tvSky = itemView.findViewById(R.id.tvSky);
             imageView = itemView.findViewById(R.id.imageView);
 
-            itemView.setBackgroundResource(getSkyId(weatherItem.getWeather()[0].getMain()));
+            //itemView.setBackgroundResource(getSkyId(weatherItem.getWeather()[0].getMain()));
+            itemView.setBackgroundResource(weatherItem.getWeather()[0].getSkyId());
+
+
             tvWeatherDescription.setText(weatherItem.getName());
             tvWeatherTemp.setText("Sıcaklık : " + weatherItem.getMain().getTemp() + " \u2103");
             tvSky.setText("Gökyüzü : " + UpperCaseWords(weatherItem.getWeather()[0].getDescription()));
@@ -81,25 +84,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             String iconURL = "http://openweathermap.org/img/wn/" + weatherItem.getWeather()[0].getIcon() + "@2x.png";
 
             Picasso.get().load(iconURL).into(imageView);
-
-        }
-
-
-        public int getSkyId(String main) {
-
-            int picture = WeatherTypes.unknown.getValue();
-            for (MistTypes mistType : MistTypes.values()) {
-                if (main.matches(mistType.getMistType())) {
-                    picture = WeatherTypes.mist.getValue();
-                }
-            }
-
-            for (WeatherTypes temp : WeatherTypes.values()) {
-                if (main.matches(temp.getWeatherType())) {
-                    picture = temp.getValue();
-                }
-            }
-            return picture;
 
         }
 
