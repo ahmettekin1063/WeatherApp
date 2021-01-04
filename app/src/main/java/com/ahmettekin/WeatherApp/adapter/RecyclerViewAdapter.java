@@ -12,9 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahmettekin.WeatherApp.R;
-import com.ahmettekin.WeatherApp.model.MistTypes;
 import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
-import com.ahmettekin.WeatherApp.model.WeatherTypes;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
