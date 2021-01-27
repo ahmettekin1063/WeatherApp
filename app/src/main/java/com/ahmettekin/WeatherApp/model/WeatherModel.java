@@ -45,16 +45,14 @@ public class WeatherModel {
 
                 int picture = WeatherTypes.unknown.getWeatherImage();
                 for (MistTypes mistType : MistTypes.values()) {
-                    if (main.matches(mistType.getMistType())) {
+                    if (this.main.matches(mistType.getMistType())) {
                         picture = WeatherTypes.mist.getWeatherImage();
-
                     }
                 }
 
                 for (WeatherTypes temp : WeatherTypes.values()) {
-                    if (main.matches(temp.getWeatherType())) {
+                    if (this.main.matches(temp.getWeatherType())) {
                         picture = temp.getWeatherImage();
-
                     }
                 }
                 return picture;

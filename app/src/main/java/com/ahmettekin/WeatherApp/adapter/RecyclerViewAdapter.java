@@ -10,12 +10,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.squareup.picasso.Picasso;
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
-import com.squareup.picasso.Picasso;
+
 
 import java.util.ArrayList;
+
 
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RowHolder> {
@@ -70,13 +71,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             tvWeatherTemp = itemView.findViewById(R.id.tvWeatherTemp);
             tvSky = itemView.findViewById(R.id.tvSky);
             imageView = itemView.findViewById(R.id.imageView);
-
-            //itemView.setBackgroundResource(getSkyId(weatherItem.getWeather()[0].getMain()));
             itemView.setBackgroundResource(weatherItem.getWeather()[0].getSkyId());
-
-
             tvWeatherDescription.setText(weatherItem.getName());
-            tvWeatherTemp.setText("Sıcaklık : " + weatherItem.getMain().getTemp() + " \u2103");
+            tvWeatherTemp.setText("Sıcaklık : " + weatherItem.getMain().getTemp() + "\u2103");
             tvSky.setText("Gökyüzü : " + UpperCaseWords(weatherItem.getWeather()[0].getDescription()));
 
             String iconURL = "http://openweathermap.org/img/wn/" + weatherItem.getWeather()[0].getIcon() + "@2x.png";
