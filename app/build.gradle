@@ -36,7 +36,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
-
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
 
     // Java language implementation

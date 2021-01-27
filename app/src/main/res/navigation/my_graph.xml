@@ -7,18 +7,25 @@
     <fragment
         android:id="@+id/listFragment"
         android:name="com.ahmettekin.WeatherApp.view.ListFragment"
-        android:label="ListFragment" >
+        android:label="fragment_list"
+        tools:layout="@layout/fragment_list" >
         <action
-            android:id="@+id/action_listFragment_to_allCityListFragment"
-            app:destination="@id/allCityListFragment" />
+            android:id="@+id/action_listFragment_to_cityDetailsFragment"
+            app:destination="@id/cityDetailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/allCityListFragment"
-        android:name="com.ahmettekin.WeatherApp.view.AllCityListFragment"
-        android:label="fragment_all_city_list"
-        tools:layout="@layout/fragment_all_city_list" >
+        android:id="@+id/cityDetailsFragment"
+        android:name="com.ahmettekin.WeatherApp.view.CityDetailsFragment"
+        android:label="fragment_city_details"
+        tools:layout="@layout/fragment_city_details" >
         <action
-            android:id="@+id/action_allCityListFragment_to_listFragment"
+            android:id="@+id/action_cityDetailsFragment_to_listFragment"
             app:destination="@id/listFragment" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="temp"
+            app:argType="float" />
     </fragment>
 </navigation>

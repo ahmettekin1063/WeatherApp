@@ -1,16 +1,15 @@
 package com.ahmettekin.WeatherApp.view;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -36,11 +36,9 @@ public class ListFragment extends Fragment {
     RecyclerViewAdapter recyclerViewAdapter;
     CompositeDisposable compositeDisposable;
 
-
     public ListFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,8 +51,6 @@ public class ListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list, container, false);
-
-
     }
 
     @Override
@@ -83,9 +79,25 @@ public class ListFragment extends Fragment {
         compositeDisposable.add(weatherAPI.getWeatherData()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleResponse)
-        );
+                //.subscribe(this::handleResponse)
+                .subscribeWith(new DisposableObserver<WeatherModel>() {
 
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull WeatherModel weatherModel) {
+                        handleResponse(weatherModel);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                })
+        );
     }
 
     public void handleResponse(WeatherModel weatherModel) {
@@ -98,7 +110,6 @@ public class ListFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
         compositeDisposable.clear();
     }

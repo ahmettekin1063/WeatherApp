@@ -1,7 +1,6 @@
 package com.ahmettekin.WeatherApp.adapter;
 
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,43 +8,51 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
-import com.squareup.picasso.Picasso;
+
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
-
+import com.ahmettekin.WeatherApp.view.ListFragmentDirections;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
 
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RowHolder> {
 
     private final ArrayList<WeatherItem> weatherItemList;
 
-
     public RecyclerViewAdapter(ArrayList<WeatherItem> weatherItemList) {
         this.weatherItemList = weatherItemList;
     }
-
 
     @NonNull
     @Override
     public RowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-
         View view = layoutInflater.inflate(R.layout.row_layout, parent, false);
         return new RowHolder(view);
 
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.RowHolder holder, int position) {
 
         holder.bind(weatherItemList.get(position));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+               ListFragmentDirections.ActionListFragmentToCityDetailsFragment action =
+                       ListFragmentDirections
+                               .actionListFragmentToCityDetailsFragment(weatherItemList.get(position).getName(),
+                                       (float) weatherItemList.get(position).getMain().getFeelsLike());
+                Navigation.findNavController(v).navigate(action);
+
+            }
+        });
     }
 
     @Override
@@ -64,7 +71,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(itemView);
         }
 
-        @SuppressLint("SetTextI18n")
         public void bind(WeatherItem weatherItem) {
 
             tvWeatherDescription = itemView.findViewById(R.id.tvWeatherDescription);
@@ -81,7 +87,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             Picasso.get().load(iconURL).into(imageView);
 
         }
-
 
         public String UpperCaseWords(String line) {
 
