@@ -37,6 +37,14 @@
                 android:text="Nasılsın"
                 android:textSize="24sp" />
 
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="254dp"
+                android:apiKey="AIzaSyDabf7lxqXaPqpmKR55tWgREWd6z-zdvyo"
+                android:clickable="true"
+                android:enabled="true"/>
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

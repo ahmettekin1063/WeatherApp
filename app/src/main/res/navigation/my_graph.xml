@@ -33,5 +33,10 @@
         <argument
             android:name="temp"
             app:argType="float" />
+        <argument android:name="lon"
+            app:argType="float" />
+        <argument
+            android:name="lat"
+            app:argType="float" />
     </fragment>
 </navigation>

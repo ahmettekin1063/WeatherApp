@@ -16,6 +16,8 @@ public class WeatherModel {
 
         private Main main;
 
+        private Coord coord;
+
         private String name;
 
         public String getName() {
@@ -32,6 +34,9 @@ public class WeatherModel {
             return main;
         }
 
+        public Coord getCoord() {
+            return coord;
+        }
 
         public class Weather {
             private long id;
@@ -116,6 +121,27 @@ public class WeatherModel {
                 return humidity;
             }
 
+        }
+
+        public class Coord{
+            private double lon;
+            private double lat;
+
+            public double getLon() {
+                return lon;
+            }
+
+            public void setLon(double lon) {
+                this.lon = lon;
+            }
+
+            public double getLat() {
+                return lat;
+            }
+
+            public void setLat(double lat) {
+                this.lat = lat;
+            }
         }
 
     }

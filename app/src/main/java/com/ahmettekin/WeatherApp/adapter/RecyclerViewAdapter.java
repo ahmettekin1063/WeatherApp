@@ -50,7 +50,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                                .actionListFragmentToCityDetailsFragment(weatherItemList.get(position).getName(),
                                        (float) weatherItemList.get(position).getMain().getFeelsLike(),
                                        (int) weatherItemList.get(position).getMain().getHumidity(),
-                                       (float) weatherItemList.get(position).getMain().getTemp());
+                                       (float) weatherItemList.get(position).getMain().getTemp(),
+                                       (float)weatherItemList.get(position).getCoord().getLon(),
+                                       (float)weatherItemList.get(position).getCoord().getLat());
 
                 Navigation.findNavController(v).navigate(action);
 
