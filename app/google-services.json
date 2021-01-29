@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "861441782875",
+    "project_id": "weatherapp-12cde",
+    "storage_bucket": "weatherapp-12cde.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861441782875:android:414add841c034b60e4fb7e",
+        "android_client_info": {
+          "package_name": "com.ahmettekin.weatherapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "861441782875-s4siaje8q2a6updcfjd7ie33iauc63mn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8Rqjc9DjFhW1UBRHrZjWlZUx0zYADAcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "861441782875-s4siaje8q2a6updcfjd7ie33iauc63mn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: "androidx.navigation.safeargs"
+apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
@@ -54,5 +55,9 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-
+    implementation platform('com.google.firebase:firebase-bom:26.4.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.firebaseui:firebase-ui-storage:6.4.0'
+    implementation 'com.google.firebase:firebase-firestore'
 }

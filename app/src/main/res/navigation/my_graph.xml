@@ -25,6 +25,12 @@
             android:name="name"
             app:argType="string" />
         <argument
+            android:name="feels_like"
+            app:argType="float" />
+        <argument
+            android:name="nem"
+            app:argType="integer" />
+        <argument
             android:name="temp"
             app:argType="float" />
     </fragment>

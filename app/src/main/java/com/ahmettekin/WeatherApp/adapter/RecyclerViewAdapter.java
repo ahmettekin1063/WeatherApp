@@ -45,10 +45,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
 
-               ListFragmentDirections.ActionListFragmentToCityDetailsFragment action =
+              ListFragmentDirections.ActionListFragmentToCityDetailsFragment action =
                        ListFragmentDirections
                                .actionListFragmentToCityDetailsFragment(weatherItemList.get(position).getName(),
-                                       (float) weatherItemList.get(position).getMain().getFeelsLike());
+                                       (float) weatherItemList.get(position).getMain().getFeelsLike(),
+                                       (int) weatherItemList.get(position).getMain().getHumidity(),
+                                       (float) weatherItemList.get(position).getMain().getTemp());
+
                 Navigation.findNavController(v).navigate(action);
 
             }
