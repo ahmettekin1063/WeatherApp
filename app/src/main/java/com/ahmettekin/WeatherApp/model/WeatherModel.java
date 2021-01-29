@@ -123,7 +123,7 @@ public class WeatherModel {
 
         }
 
-        public class Coord{
+        public class Coord {
             private double lon;
             private double lat;
 

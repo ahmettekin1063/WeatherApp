@@ -4,16 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:backgroundTint="#99E324"
     tools:context=".view.CityDetailsFragment">
 
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#F6EBEB"
             android:orientation="vertical">
 
             <TextView
@@ -40,10 +44,10 @@
             <com.google.android.gms.maps.MapView
                 android:id="@+id/mapView"
                 android:layout_width="match_parent"
-                android:layout_height="254dp"
+                android:layout_height="283dp"
                 android:apiKey="AIzaSyDabf7lxqXaPqpmKR55tWgREWd6z-zdvyo"
-                android:clickable="true"
-                android:enabled="true"/>
+                android:clickable="false"
+                android:enabled="true" />
 
         </LinearLayout>
     </ScrollView>

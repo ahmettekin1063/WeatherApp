@@ -33,7 +33,7 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     private TextView textView, textView2;
     private ImageView imageView2;
-    private StorageReference islandRef;
+    private StorageReference imageRef;
     private final long ONE_MEGABYTE = 1024 * 1024;
     private MapView mapView;
     private GoogleMap map;
@@ -46,7 +46,6 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
     }
 
@@ -54,18 +53,12 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_city_details, container, false);
+        View view = inflater.inflate(R.layout.fragment_city_details, container, false);
 
-        // Gets the MapView from the XML layout and creates it
-        mapView = (MapView) v.findViewById(R.id.mapView);
+        mapView = view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-
-
         mapView.getMapAsync(this);
-
-
-        return v;
-        //return inflater.inflate(R.layout.fragment_city_details, container, false);
+        return view;
     }
 
     @Override
@@ -76,18 +69,10 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
         textView2 = view.findViewById(R.id.textView2);
         imageView2 = view.findViewById(R.id.imageView2);
 
-
-        //mapView = view.findViewById(R.id.mapView);
-        //mapView.onCreate(savedInstanceState);
-        //mapView.getMapAsync(this);
-
         cityName = CityDetailsFragmentArgs.fromBundle(requireArguments()).getName();
         float feelsLike = CityDetailsFragmentArgs.fromBundle(requireArguments()).getFeelsLike();
         float temp = CityDetailsFragmentArgs.fromBundle(requireArguments()).getTemp();
-
-
         int nem = CityDetailsFragmentArgs.fromBundle(requireArguments()).getNem();
-
 
         textView.setText(cityName);
         textView2.setText("Sıcaklık: " + temp + "\u2103" + "\nHissedilen sıcaklık: " + feelsLike + "\u2103" + "\nNem Değeri: %" + nem);
@@ -96,8 +81,8 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
     }
 
     public void setImageFromFirestore(String cityName) {
-        islandRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://weatherapp-12cde.appspot.com/images/" + cityName + ".jpg");
-        islandRef.getBytes(4 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        imageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://weatherapp-12cde.appspot.com/images/" + cityName + ".jpg");
+        imageRef.getBytes(4 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -117,23 +102,20 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
         lon = CityDetailsFragmentArgs.fromBundle(requireArguments()).getLon();
         lat = CityDetailsFragmentArgs.fromBundle(requireArguments()).getLat();
 
-        System.out.println(lon);
-        System.out.println(lat);
-
         map = googleMap;
         map.getUiSettings().setMyLocationButtonEnabled(false);
 
         if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
-            ActivityCompat.requestPermissions(this.getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},1);
+            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
 
-        }else{
+        } else {
             map.setMyLocationEnabled(true);
         }
 
-        map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat,lon)));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon),10));
+        map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat, lon)));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 10));
 
     }
 
@@ -143,9 +125,9 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
         if (grantResults.length > 0) {
             if (requestCode == 1) {
                 if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                    map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat,lon)));
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon),10));
+                    map.setMyLocationEnabled(true);
+                    map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat, lon)));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 10));
                 }
             }
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
