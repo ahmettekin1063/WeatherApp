@@ -1,7 +1,5 @@
 package com.ahmettekin.WeatherApp.view;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -13,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.ahmettekin.WeatherApp.R;
@@ -43,7 +40,6 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
     private String cityName;
     private final String WEATHERAPP_IMAGE_PATH = "gs://weatherapp-12cde.appspot.com/images/";
     private final String IMAGE_FILE_EXTENSION = ".jpg";
-    private final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private final String DEGREE_SYMBOL = "\u2103";
     private final float VALUE_OF_ZOOM = 10f;
 
@@ -111,17 +107,6 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     }
 
-    private boolean checkLocationPermission() {
-
-        return ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-    }
-
-    private void requestPermission() {
-
-        ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -130,34 +115,11 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
         lat = CityDetailsFragmentArgs.fromBundle(requireArguments()).getLat();
 
         map = googleMap;
-        map.getUiSettings().setMyLocationButtonEnabled(false);
 
-        if (!checkLocationPermission()) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            requestPermission();
-        } else {
-            map.setMyLocationEnabled(true);
-        }
 
         map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat, lon)));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), VALUE_OF_ZOOM));
 
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (grantResults.length > 0) {
-            if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-                if (checkLocationPermission()) {
-                    map.setMyLocationEnabled(true);
-                    map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat, lon)));
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), VALUE_OF_ZOOM));
-                }
-            }
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
     }
 
     @Override
