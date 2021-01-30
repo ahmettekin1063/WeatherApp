@@ -30,15 +30,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ListFragment extends Fragment {
 
-    ArrayList<WeatherModel.WeatherItem> weatherItems;
-    Retrofit retrofit;
-    RecyclerView recyclerView;
-    RecyclerViewAdapter recyclerViewAdapter;
-    CompositeDisposable compositeDisposable;
-
-    public ListFragment() {
-        // Required empty public constructor
-    }
+   private ArrayList<WeatherModel.WeatherItem> weatherItems;
+   private Retrofit retrofit;
+   private RecyclerView recyclerView;
+   private RecyclerViewAdapter recyclerViewAdapter;
+   private CompositeDisposable compositeDisposable;
+   private String BASE_URL = "http://api.openweathermap.org/data/2.5/";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,9 +44,7 @@ public class ListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
@@ -59,8 +54,6 @@ public class ListFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerView);
         Gson gson = new GsonBuilder().setLenient().create();
-        String BASE_URL = "http://api.openweathermap.org/data/2.5/";
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
