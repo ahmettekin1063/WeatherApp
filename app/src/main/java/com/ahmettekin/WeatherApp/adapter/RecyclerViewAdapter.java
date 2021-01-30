@@ -24,6 +24,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private final ArrayList<WeatherItem> weatherItemList;
     private final String DEGREE_SYMBOL = "\u2103";
+    private final String HEAD_OF_ICON_PATH = "http://openweathermap.org/img/wn/";
+    private final String END_OF_ICON_PATH = "@2x.png";
+
 
     public RecyclerViewAdapter(ArrayList<WeatherItem> weatherItemList) {
         this.weatherItemList = weatherItemList;
@@ -101,7 +104,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             tvWeatherTemp.setText(MessageFormat.format("Sıcaklık : {0}{1}", weatherItem.getMain().getTemp(), DEGREE_SYMBOL));
             tvSky.setText(MessageFormat.format("Gökyüzü : {0}", UpperCaseWords(weatherItem.getWeather()[0].getDescription())));
 
-            String iconURL = "http://openweathermap.org/img/wn/" + weatherItem.getWeather()[0].getIcon() + "@2x.png";
+            String iconURL = HEAD_OF_ICON_PATH + weatherItem.getWeather()[0].getIcon() + END_OF_ICON_PATH;
 
             Picasso.get().load(iconURL).into(imageView);
         }

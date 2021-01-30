@@ -107,7 +107,6 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     }
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -115,8 +114,6 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
         lat = CityDetailsFragmentArgs.fromBundle(requireArguments()).getLat();
 
         map = googleMap;
-
-
         map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat, lon)));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), VALUE_OF_ZOOM));
 
