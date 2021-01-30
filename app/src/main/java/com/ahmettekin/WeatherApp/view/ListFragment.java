@@ -30,12 +30,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ListFragment extends Fragment {
 
-   private ArrayList<WeatherModel.WeatherItem> weatherItems;
-   private Retrofit retrofit;
-   private RecyclerView recyclerView;
-   private RecyclerViewAdapter recyclerViewAdapter;
-   private CompositeDisposable compositeDisposable;
-   private String BASE_URL = "http://api.openweathermap.org/data/2.5/";
+    private ArrayList<WeatherModel.WeatherItem> weatherItems;
+    private Retrofit retrofit;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private CompositeDisposable compositeDisposable;
+    private String BASE_URL = "http://api.openweathermap.org/data/2.5/";
+    static ArrayList<WeatherModel.WeatherItem> filteredWeatherModel = new ArrayList<>();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         recyclerView = view.findViewById(R.id.recyclerView);
         Gson gson = new GsonBuilder().setLenient().create();
@@ -93,9 +96,24 @@ public class ListFragment extends Fragment {
         );
     }
 
+    public ArrayList<WeatherModel.WeatherItem> filter(ArrayList<WeatherModel.WeatherItem> weatherItemArrayList) {
+
+        for (WeatherModel.WeatherItem temp : weatherItemArrayList) {
+
+            try {
+                if (temp.getName().matches(ListFragmentArgs.fromBundle(requireArguments()).getCityName()) && !filteredWeatherModel.contains(temp)) {
+                    filteredWeatherModel.add(temp);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return filteredWeatherModel;
+    }
+
     public void handleResponse(WeatherModel weatherModel) {
 
-        this.weatherItems = weatherModel.weatherItems;
+        this.weatherItems = filter(weatherModel.weatherItems);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewAdapter = new RecyclerViewAdapter(this.weatherItems);
         recyclerView.setAdapter(recyclerViewAdapter);

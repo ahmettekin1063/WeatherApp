@@ -7,6 +7,8 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
 import com.ahmettekin.WeatherApp.R;
 
@@ -30,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == R.id.add_city_item) {
+
+            NavDirections navDirections = ListFragmentDirections.actionListFragmentToAddCityFragment();
+            Navigation.findNavController(this,R.id.fragment).navigate(navDirections);
 
         }
         return super.onOptionsItemSelected(item);
