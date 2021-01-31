@@ -36,8 +36,7 @@ public class ListFragment extends Fragment {
     private RecyclerViewAdapter recyclerViewAdapter;
     private CompositeDisposable compositeDisposable;
     private String BASE_URL = "http://api.openweathermap.org/data/2.5/";
-    static ArrayList<WeatherModel.WeatherItem> filteredWeatherModel = new ArrayList<>();
-
+    private static ArrayList<WeatherModel.WeatherItem> filteredWeatherModel = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,8 +53,7 @@ public class ListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-        recyclerView = view.findViewById(R.id.recyclerView);
+        initViews(view);
         Gson gson = new GsonBuilder().setLenient().create();
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -65,6 +63,10 @@ public class ListFragment extends Fragment {
 
         loadData();
 
+    }
+
+    public void initViews(View view) {
+        recyclerView = view.findViewById(R.id.recyclerView);
     }
 
     private void loadData() {
@@ -77,20 +79,15 @@ public class ListFragment extends Fragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 //.subscribe(this::handleResponse)
                 .subscribeWith(new DisposableObserver<WeatherModel>() {
-
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull WeatherModel weatherModel) {
                         handleResponse(weatherModel);
                     }
-
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-
                     }
-
                     @Override
                     public void onComplete() {
-
                     }
                 })
         );
@@ -106,6 +103,7 @@ public class ListFragment extends Fragment {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                return new ArrayList<>();
             }
         }
         return filteredWeatherModel;

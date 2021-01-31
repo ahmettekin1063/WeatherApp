@@ -99,12 +99,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         private void configureUI(WeatherItem weatherItem) {
 
-            itemView.setBackgroundResource(weatherItem.getWeather()[0].getSkyId());
+            WeatherItem.Weather weatherObject;
+
+            if (weatherItem.getWeathers().length > 0) {
+                weatherObject = weatherItem.getWeathers()[0];
+            } else {
+                weatherObject = null;
+            }
+
+            itemView.setBackgroundResource(weatherObject.getSkyId());
             tvWeatherDescription.setText(weatherItem.getName());
             tvWeatherTemp.setText(MessageFormat.format("Sıcaklık : {0}{1}", weatherItem.getMain().getTemp(), DEGREE_SYMBOL));
-            tvSky.setText(MessageFormat.format("Gökyüzü : {0}", UpperCaseWords(weatherItem.getWeather()[0].getDescription())));
+            tvSky.setText(MessageFormat.format("Gökyüzü : {0}", UpperCaseWords(weatherObject.getDescription())));
 
-            String iconURL = HEAD_OF_ICON_PATH + weatherItem.getWeather()[0].getIcon() + END_OF_ICON_PATH;
+            String iconURL = HEAD_OF_ICON_PATH + weatherObject.getIcon() + END_OF_ICON_PATH;
 
             Picasso.get().load(iconURL).into(imageView);
         }

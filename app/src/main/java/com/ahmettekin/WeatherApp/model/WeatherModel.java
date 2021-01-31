@@ -39,7 +39,7 @@ public class WeatherModel {
 
         }
 
-        public Weather[] getWeather() {
+        public Weather[] getWeathers() {
             return weather;
         }
 

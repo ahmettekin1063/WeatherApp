@@ -33,9 +33,18 @@ public class AddCityFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        initViews(view);
+        configureListener();
+
+    }
+
+    private void initViews(View view) {
         editText = view.findViewById(R.id.editText);
         button = view.findViewById(R.id.button);
+    }
 
+    private void  configureListener(){
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,6 +55,6 @@ public class AddCityFragment extends Fragment {
                 Navigation.findNavController(v).navigate(action);
             }
         });
-
     }
+
 }
