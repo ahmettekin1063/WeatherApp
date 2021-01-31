@@ -84,8 +84,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public void bind(WeatherItem weatherItem) {
 
             initViews();
-            configureUI(weatherItem);
-
+            try{
+                configureUI(weatherItem);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
         private void initViews() {
@@ -103,18 +106,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             if (weatherItem.getWeathers().length > 0) {
                 weatherObject = weatherItem.getWeathers()[0];
-            } else {
-                weatherObject = null;
+                itemView.setBackgroundResource(weatherObject.getSkyId());
+                tvSky.setText(MessageFormat.format("Gökyüzü : {0}", UpperCaseWords(weatherObject.getDescription())));
+                String iconURL = HEAD_OF_ICON_PATH + weatherObject.getIcon() + END_OF_ICON_PATH;
+                Picasso.get().load(iconURL).into(imageView);
             }
 
-            itemView.setBackgroundResource(weatherObject.getSkyId());
             tvWeatherDescription.setText(weatherItem.getName());
             tvWeatherTemp.setText(MessageFormat.format("Sıcaklık : {0}{1}", weatherItem.getMain().getTemp(), DEGREE_SYMBOL));
-            tvSky.setText(MessageFormat.format("Gökyüzü : {0}", UpperCaseWords(weatherObject.getDescription())));
 
-            String iconURL = HEAD_OF_ICON_PATH + weatherObject.getIcon() + END_OF_ICON_PATH;
 
-            Picasso.get().load(iconURL).into(imageView);
         }
 
         public String UpperCaseWords(String line) {
