@@ -118,7 +118,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         }
 
-        public String UpperCaseWords(String line) {
+        private String UpperCaseWords(String line) {
 
             line = line.trim().toLowerCase();
             String[] data = line.split("\\s");

@@ -60,4 +60,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.firebaseui:firebase-ui-storage:6.4.0'
     implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
 }

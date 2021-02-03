@@ -15,9 +15,6 @@
         <action
             android:id="@+id/action_listFragment_to_addCityFragment"
             app:destination="@id/addCityFragment" />
-        <argument
-            android:name="cityName"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/cityDetailsFragment"

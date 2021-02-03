@@ -10,14 +10,16 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import com.ahmettekin.WeatherApp.R;
+import com.ahmettekin.WeatherApp.database.YerelVeriSinifi;
 
 public class AddCityFragment extends Fragment {
 
-    EditText editText;
-    Button button;
+    private EditText editText;
+    private Button button;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,16 +47,23 @@ public class AddCityFragment extends Fragment {
     }
 
     private void  configureListener(){
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                AddCityFragmentDirections.ActionAddCityFragmentToListFragment action
-                        = AddCityFragmentDirections.actionAddCityFragmentToListFragment(editText.getText().toString());
+                YerelVeriSinifi yerelVeriSinifi = new YerelVeriSinifi();
+                try{
+                    yerelVeriSinifi.veriYaz(editText.getText().toString(),getActivity().getApplicationContext());
+                }catch (Exception e){
+                    System.out.println("veri yazma hatası: "+e.getLocalizedMessage());
+                }
 
-                Navigation.findNavController(v).navigate(action);
+                NavDirections navDirections = AddCityFragmentDirections.actionAddCityFragmentToListFragment();
+                Navigation.findNavController(v).navigate(navDirections);
+
             }
         });
     }
-
 }

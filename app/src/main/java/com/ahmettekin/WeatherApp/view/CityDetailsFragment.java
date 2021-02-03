@@ -1,5 +1,6 @@
 package com.ahmettekin.WeatherApp.view;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -107,6 +108,7 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -116,6 +118,7 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
         map = googleMap;
         map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat, lon)));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), VALUE_OF_ZOOM));
+        
 
     }
 
@@ -142,4 +145,5 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
 }
