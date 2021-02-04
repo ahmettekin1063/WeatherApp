@@ -20,7 +20,7 @@ public class CityService {
     private ArrayList<CityModel> cityModels;
     private Retrofit retrofit;
     private String BASE_URL = "https://raw.githubusercontent.com/";
-    int istenenId;
+    int istenenId=0;
     private static CityService cityService = null;
 
     private CityService() {
@@ -33,15 +33,14 @@ public class CityService {
         return cityService;
     }
 
-    public int loadData(String cityName) {
-        OkHttpClient.Builder httpClient = configureHttpLogging();
+    public int getCityId(String cityName) {
         Gson gson = new GsonBuilder().setLenient().create();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(httpClient.build())
+                .client(getHttpClient().build())
                 .build();
 
         CityAPI cityAPI = retrofit.create(CityAPI.class);
@@ -49,8 +48,7 @@ public class CityService {
         call.enqueue(new Callback<List<CityModel>>() {
             @Override
             public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
-                istenenId = 0;
-
+                //istenenId = 0;
                 if (response.isSuccessful()) {
                     List<CityModel> responseList = response.body();
                     cityModels = new ArrayList<>(responseList);
@@ -71,7 +69,7 @@ public class CityService {
         return istenenId;
     }
 
-    private OkHttpClient.Builder configureHttpLogging(){
+    private OkHttpClient.Builder getHttpClient(){
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();

@@ -5,26 +5,27 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.ahmettekin.WeatherApp.service.CityService;
 
-import static android.content.Context.MODE_PRIVATE;
-
-public class LocalDataClass {
+public class LocalDataClass extends AppCompatActivity {
     private String strSqlQuery = "SELECT * FROM cities";
     private String databaseName = "Cities";
-    private String getStrSqlTable = "CREATE TABLE IF NOT EXISTS cities(id INTEGER, cityname VARCHAR)";
+    private String createSqlTable = "CREATE TABLE IF NOT EXISTS cities(id INTEGER, cityname VARCHAR)";
     private String insertSqlTable = "INSERT INTO cities(id, cityname) VALUES (?, ?)";
     private String columnIndexCityName = "cityname";
     private String columnIndexCityId = "id";
     private String deleteSqlCommand = "DELETE FROM cities";
     private static LocalDataClass localDataClass = null;
 
-    private LocalDataClass(){
+    private LocalDataClass() {
     }
+
     //    String id="2013159,524901,2643743,745042,1850144,6167865,5106292,2988507,4140963";
-    public static LocalDataClass getInstance(){
-        if(localDataClass==null){
-            localDataClass=new LocalDataClass();
+    public static LocalDataClass getInstance() {
+        if (localDataClass == null) {
+            localDataClass = new LocalDataClass();
         }
         return localDataClass;
     }
@@ -55,7 +56,7 @@ public class LocalDataClass {
         int eklenecekId = servistenGirilenSehrinIdsiniCek(cityName);
 
         SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
-        database.execSQL(getStrSqlTable);
+        database.execSQL(createSqlTable);
         String toCompile = insertSqlTable;
         SQLiteStatement sqLiteStatement = database.compileStatement(toCompile);
         sqLiteStatement.bindString(1, String.valueOf(eklenecekId));
@@ -74,8 +75,8 @@ public class LocalDataClass {
     }
 
     private int servistenGirilenSehrinIdsiniCek(String cityName) {
-        CityService cityService = CityService.getInstance();
-        return cityService.loadData(cityName);
+        CityService.getInstance().getCityId(cityName);
+        return CityService.getInstance().getCityId(cityName);
     }
 
     public void deleteDatabase(Context context) {

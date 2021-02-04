@@ -51,14 +51,13 @@ public class ListFragment extends Fragment {
         /*SQLiteDatabase database = getActivity().getApplicationContext().openOrCreateDatabase("Cities", MODE_PRIVATE, null);
         database.execSQL("DELETE FROM cities");*/
 
-        OkHttpClient.Builder httpClient = configureHttpLogging();
         initViews(view);
         Gson gson = new GsonBuilder().setLenient().create();
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(httpClient.build())
+                .client(getHttpClient().build())
                 .build();
         loadData();
     }
@@ -100,7 +99,7 @@ public class ListFragment extends Fragment {
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
-    private OkHttpClient.Builder configureHttpLogging() {
+    private OkHttpClient.Builder getHttpClient() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
