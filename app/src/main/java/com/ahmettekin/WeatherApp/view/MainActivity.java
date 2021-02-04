@@ -14,13 +14,10 @@ import com.ahmettekin.WeatherApp.R;
 
 public class MainActivity extends AppCompatActivity {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
     }
 
     @Override
@@ -32,12 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
         if (item.getItemId() == R.id.add_city_item) {
-
             NavDirections navDirections = ListFragmentDirections.actionListFragmentToAddCityFragment();
-            Navigation.findNavController(this,R.id.fragment).navigate(navDirections);
-
+            Navigation.findNavController(this, R.id.fragment).navigate(navDirections);
         }
         return super.onOptionsItemSelected(item);
     }

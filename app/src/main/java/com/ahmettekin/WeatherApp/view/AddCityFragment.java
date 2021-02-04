@@ -14,56 +14,49 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import com.ahmettekin.WeatherApp.R;
-import com.ahmettekin.WeatherApp.database.YerelVeriSinifi;
+import com.ahmettekin.WeatherApp.database.LocalDataClass;
 
 public class AddCityFragment extends Fragment {
-
     private EditText editText;
-    private Button button;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private Button addButton;
+    private Button deleteDatabaseButton;
+    private String deleteSqlCommand = "DELETE FROM cities";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_add_city, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         initViews(view);
         configureListener();
-
     }
 
     private void initViews(View view) {
         editText = view.findViewById(R.id.editText);
-        button = view.findViewById(R.id.button);
+        addButton = view.findViewById(R.id.addButton);
+        deleteDatabaseButton = view.findViewById(R.id.deleteDatabaseButton);
     }
 
-    private void  configureListener(){
+    private void configureListener() {
+        addButton.setOnClickListener(v -> {
+            LocalDataClass localDataClass = LocalDataClass.getInstance();
 
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                YerelVeriSinifi yerelVeriSinifi = new YerelVeriSinifi();
-                try{
-                    yerelVeriSinifi.veriYaz(editText.getText().toString(),getActivity().getApplicationContext());
-                }catch (Exception e){
-                    System.out.println("veri yazma hatası: "+e.getLocalizedMessage());
-                }
-
-                NavDirections navDirections = AddCityFragmentDirections.actionAddCityFragmentToListFragment();
-                Navigation.findNavController(v).navigate(navDirections);
-
+            try {
+                localDataClass.veriYaz(editText.getText().toString(), getActivity().getApplicationContext());
+            } catch (Exception e) {
+                System.out.println("Data write error: " + e.getLocalizedMessage());
             }
+
+            NavDirections navDirections = AddCityFragmentDirections.actionAddCityFragmentToListFragment();
+            Navigation.findNavController(v).navigate(navDirections);
+        });
+
+        deleteDatabaseButton.setOnClickListener(v -> {
+            LocalDataClass localDataClass = LocalDataClass.getInstance();
+            localDataClass.deleteDatabase(getActivity().getApplicationContext());
         });
     }
 }

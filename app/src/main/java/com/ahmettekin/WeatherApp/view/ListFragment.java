@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
-import com.ahmettekin.WeatherApp.database.YerelVeriSinifi;
+import com.ahmettekin.WeatherApp.database.LocalDataClass;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
 import com.ahmettekin.WeatherApp.service.WeatherAPI;
 import com.google.gson.Gson;
@@ -32,7 +32,6 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ListFragment extends Fragment {
-
     private ArrayList<WeatherModel.WeatherItem> weatherItems;
     private Retrofit retrofit;
     private RecyclerView recyclerView;
@@ -40,30 +39,19 @@ public class ListFragment extends Fragment {
     private CompositeDisposable compositeDisposable;
     private String BASE_URL = "http://api.openweathermap.org/data/2.5/";
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        /*SQLiteDatabase database = getActivity().getApplicationContext().openOrCreateDatabase("Cities", MODE_PRIVATE, null);
+        database.execSQL("DELETE FROM cities");*/
 
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);
-
+        OkHttpClient.Builder httpClient = configureHttpLogging();
         initViews(view);
         Gson gson = new GsonBuilder().setLenient().create();
         retrofit = new Retrofit.Builder()
@@ -72,14 +60,7 @@ public class ListFragment extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(httpClient.build())
                 .build();
-
-        try{
-            loadData();
-        }catch (Exception e){
-            System.out.println("list fragment hatası");
-        }
-
-
+        loadData();
     }
 
     public void initViews(View view) {
@@ -87,18 +68,15 @@ public class ListFragment extends Fragment {
     }
 
     private void loadData() {
-
         WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
         compositeDisposable = new CompositeDisposable();
-
-        YerelVeriSinifi yerelVeriSinifi = new YerelVeriSinifi();
-        String id = yerelVeriSinifi.idGetir(getActivity().getApplicationContext());
-
+        LocalDataClass localDataClass = LocalDataClass.getInstance();
+        String id = localDataClass.idGetir(getActivity().getApplicationContext());
         compositeDisposable.add(weatherAPI.getWeatherData(id)
-
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<WeatherModel>() {
+
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull WeatherModel weatherModel) {
                         handleResponse(weatherModel);
@@ -116,11 +94,18 @@ public class ListFragment extends Fragment {
     }
 
     public void handleResponse(WeatherModel weatherModel) {
-
         this.weatherItems = weatherModel.weatherItems;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewAdapter = new RecyclerViewAdapter(this.weatherItems);
         recyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    private OkHttpClient.Builder configureHttpLogging() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(logging);
+        return httpClient;
     }
 
     @Override

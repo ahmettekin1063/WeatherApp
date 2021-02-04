@@ -19,9 +19,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class CityService {
     private ArrayList<CityModel> cityModels;
     private Retrofit retrofit;
-    private String BASE_URL = " https://raw.githubusercontent.com/";
-    private int istenenId = 0;
-
+    private String BASE_URL = "https://raw.githubusercontent.com/";
+    int istenenId;
     private static CityService cityService = null;
 
     private CityService() {
@@ -30,35 +29,29 @@ public class CityService {
     public static CityService getInstance() {
         if (cityService == null) {
             cityService = new CityService();
-            return cityService;
-        } else {
-            return cityService;
         }
+        return cityService;
     }
 
     public int loadData(String cityName) {
-
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);
-
+        OkHttpClient.Builder httpClient = configureHttpLogging();
         Gson gson = new GsonBuilder().setLenient().create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(httpClient.build())
                 .build();
-        CityAPI cityAPI = retrofit.create(CityAPI.class);
 
+        CityAPI cityAPI = retrofit.create(CityAPI.class);
         Call<List<CityModel>> call = cityAPI.getData();
         call.enqueue(new Callback<List<CityModel>>() {
             @Override
             public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
+                istenenId = 0;
 
                 if (response.isSuccessful()) {
-
                     List<CityModel> responseList = response.body();
                     cityModels = new ArrayList<>(responseList);
 
@@ -76,5 +69,13 @@ public class CityService {
             }
         });
         return istenenId;
+    }
+
+    private OkHttpClient.Builder configureHttpLogging(){
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(logging);
+        return httpClient;
     }
 }
