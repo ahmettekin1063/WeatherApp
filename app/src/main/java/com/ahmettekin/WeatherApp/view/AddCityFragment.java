@@ -10,20 +10,18 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
 
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.database.LocalDataClass;
+import com.ahmettekin.WeatherApp.service.CityService;
 
 public class AddCityFragment extends Fragment {
     private EditText editText;
-    private Button addButton;
-    private Button deleteDatabaseButton;
-    private String deleteSqlCommand = "DELETE FROM cities";
+    private Button addButton, deleteDatabaseButton, readDatabaseButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getParentFragmentManager().beginTransaction().addToBackStack("ali");
         return inflater.inflate(R.layout.fragment_add_city, container, false);
     }
 
@@ -38,25 +36,24 @@ public class AddCityFragment extends Fragment {
         editText = view.findViewById(R.id.editText);
         addButton = view.findViewById(R.id.addButton);
         deleteDatabaseButton = view.findViewById(R.id.deleteDatabaseButton);
+        readDatabaseButton = view.findViewById(R.id.readDatabaseButton);
     }
 
     private void configureListener() {
-        addButton.setOnClickListener(v -> {
-            LocalDataClass localDataClass = LocalDataClass.getInstance();
-
+        addButton.setOnClickListener(view -> {
             try {
-                localDataClass.veriYaz(editText.getText().toString(), getActivity().getApplicationContext());
+                CityService.getInstance().writeDataLocalDatabase(editText.getText().toString(), view);
             } catch (Exception e) {
                 System.out.println("Data write error: " + e.getLocalizedMessage());
             }
-
-            NavDirections navDirections = AddCityFragmentDirections.actionAddCityFragmentToListFragment();
-            Navigation.findNavController(v).navigate(navDirections);
         });
 
-        deleteDatabaseButton.setOnClickListener(v -> {
-            LocalDataClass localDataClass = LocalDataClass.getInstance();
-            localDataClass.deleteDatabase(getActivity().getApplicationContext());
+        deleteDatabaseButton.setOnClickListener(view -> {
+            LocalDataClass.getInstance().deleteDatabase(getContext());
+        });
+
+        readDatabaseButton.setOnClickListener(view -> {
+            LocalDataClass.getInstance().readDatabase(getContext());
         });
     }
 }

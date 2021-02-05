@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,8 +26,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -37,7 +36,8 @@ public class ListFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
     private CompositeDisposable compositeDisposable;
-    private String BASE_URL = "http://api.openweathermap.org/data/2.5/";
+    private final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
+    private final String databaseEmptyWarningText = "veritabanı boş";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,19 +47,18 @@ public class ListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        /*SQLiteDatabase database = getActivity().getApplicationContext().openOrCreateDatabase("Cities", MODE_PRIVATE, null);
-        database.execSQL("DELETE FROM cities");*/
-
         initViews(view);
         Gson gson = new GsonBuilder().setLenient().create();
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(getHttpClient().build())
                 .build();
-        loadData();
+        try {
+            loadData();
+        } catch (Exception e) {
+            Toast.makeText(view.getContext(), databaseEmptyWarningText, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void initViews(View view) {
@@ -69,8 +68,7 @@ public class ListFragment extends Fragment {
     private void loadData() {
         WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
         compositeDisposable = new CompositeDisposable();
-        LocalDataClass localDataClass = LocalDataClass.getInstance();
-        String id = localDataClass.idGetir(getActivity().getApplicationContext());
+        String id = LocalDataClass.getInstance().idGetir(getActivity());
         compositeDisposable.add(weatherAPI.getWeatherData(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -97,14 +95,6 @@ public class ListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewAdapter = new RecyclerViewAdapter(this.weatherItems);
         recyclerView.setAdapter(recyclerViewAdapter);
-    }
-
-    private OkHttpClient.Builder getHttpClient() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);
-        return httpClient;
     }
 
     @Override

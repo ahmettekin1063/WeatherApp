@@ -1,14 +1,21 @@
 package com.ahmettekin.WeatherApp.service;
 
+import android.view.View;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
+
+import com.ahmettekin.WeatherApp.database.LocalDataClass;
 import com.ahmettekin.WeatherApp.model.CityModel;
+import com.ahmettekin.WeatherApp.view.AddCityFragmentDirections;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -16,12 +23,13 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CityService {
+public class CityService extends AppCompatActivity {
     private ArrayList<CityModel> cityModels;
     private Retrofit retrofit;
-    private String BASE_URL = "https://raw.githubusercontent.com/";
-    int istenenId=0;
+    private static final String BASE_URL = "https://raw.githubusercontent.com/";
     private static CityService cityService = null;
+    private static final String cityNotFoundText = "Aradığınız Şehir Bulunamadı";
+    private static final String cityAddedText = " şehri başarılı bir şekilde eklendi";
 
     private CityService() {
     }
@@ -33,14 +41,13 @@ public class CityService {
         return cityService;
     }
 
-    public int getCityId(String cityName) {
+    public void writeDataLocalDatabase(String cityName, View view) {
         Gson gson = new GsonBuilder().setLenient().create();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(getHttpClient().build())
                 .build();
 
         CityAPI cityAPI = retrofit.create(CityAPI.class);
@@ -48,16 +55,24 @@ public class CityService {
         call.enqueue(new Callback<List<CityModel>>() {
             @Override
             public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
-                //istenenId = 0;
                 if (response.isSuccessful()) {
                     List<CityModel> responseList = response.body();
                     cityModels = new ArrayList<>(responseList);
+                    boolean sehirBulundu = false;
 
                     for (CityModel cityModel : cityModels) {
-                        if (cityModel.name.matches(cityName)) {
-                            istenenId = cityModel.id;
+                        if (cityModel.name.matches(Character.toUpperCase(cityName.charAt(0)) + cityName.substring(1))) {
+                            LocalDataClass.getInstance().veriYaz(cityModel.name, cityModel.id, view.getContext());
+                            sehirBulundu = true;
+                            Toast.makeText(view.getContext(), cityModel.name + cityAddedText, Toast.LENGTH_SHORT).show();
+                            break;
                         }
                     }
+                    if (!sehirBulundu) {
+                        Toast.makeText(view.getContext(), cityNotFoundText, Toast.LENGTH_SHORT).show();
+                    }
+                    NavDirections navDirections = AddCityFragmentDirections.actionAddCityFragmentToListFragment();
+                    Navigation.findNavController(view).navigate(navDirections);
                 }
             }
 
@@ -66,14 +81,5 @@ public class CityService {
                 t.printStackTrace();
             }
         });
-        return istenenId;
-    }
-
-    private OkHttpClient.Builder getHttpClient(){
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);
-        return httpClient;
     }
 }

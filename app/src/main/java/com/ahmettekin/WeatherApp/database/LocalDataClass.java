@@ -4,25 +4,23 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.widget.Toast;
+import static android.content.Context.MODE_PRIVATE;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.ahmettekin.WeatherApp.service.CityService;
-
-public class LocalDataClass extends AppCompatActivity {
-    private String strSqlQuery = "SELECT * FROM cities";
-    private String databaseName = "Cities";
-    private String createSqlTable = "CREATE TABLE IF NOT EXISTS cities(id INTEGER, cityname VARCHAR)";
-    private String insertSqlTable = "INSERT INTO cities(id, cityname) VALUES (?, ?)";
-    private String columnIndexCityName = "cityname";
-    private String columnIndexCityId = "id";
-    private String deleteSqlCommand = "DELETE FROM cities";
+public class LocalDataClass {
+    private final String strSqlQuery = "SELECT * FROM cities";
+    private final String databaseName = "Cities";
+    private final String createSqlTable = "CREATE TABLE IF NOT EXISTS cities(id INTEGER, cityname VARCHAR)";
+    private final String insertSqlTable = "INSERT INTO cities(id, cityname) VALUES (?, ?)";
+    private final String columnIndexCityName = "cityname";
+    private final String columnIndexCityId = "id";
+    private final String deleteSqlTable = "DELETE FROM cities";
+    private final String alreadyExistSqlWarningText = "Şehir veritabanında zaten var";
     private static LocalDataClass localDataClass = null;
 
     private LocalDataClass() {
     }
 
-    //    String id="2013159,524901,2643743,745042,1850144,6167865,5106292,2988507,4140963";
     public static LocalDataClass getInstance() {
         if (localDataClass == null) {
             localDataClass = new LocalDataClass();
@@ -32,36 +30,54 @@ public class LocalDataClass extends AppCompatActivity {
 
     public String idGetir(Context context) {
         SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
-        StringBuilder groupIds = new StringBuilder("2013159");
+        database.execSQL(createSqlTable);
+        StringBuilder groupIds = new StringBuilder();
+        Cursor cursor = database.rawQuery(strSqlQuery, null);
+        int idIx = cursor.getColumnIndex(columnIndexCityId);
 
-        try {
-            Cursor cursor = database.rawQuery(strSqlQuery, null);
-            int idIx = cursor.getColumnIndex(columnIndexCityId);
-
-            while (cursor.moveToNext()) {
-                int id = cursor.getInt(idIx);
-                groupIds.append(id);
-                groupIds.append(",");
-            }
-
-            groupIds.deleteCharAt(groupIds.lastIndexOf(","));
-            cursor.close();
-        } catch (Exception e) {
-            System.out.println("error fetching id");
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(idIx);
+            groupIds.append(id);
+            groupIds.append(",");
         }
+
+        groupIds.deleteCharAt(groupIds.lastIndexOf(","));
+        cursor.close();
         return groupIds.toString();
     }
 
-    public void veriYaz(String cityName, Context context) {
-        int eklenecekId = servistenGirilenSehrinIdsiniCek(cityName);
+    public void veriYaz(String cityName, int eklenecekId, Context context) {
+        if (!databaseControl(cityName, context)) {
+            SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
+            database.execSQL(createSqlTable);
+            SQLiteStatement sqLiteStatement = database.compileStatement(insertSqlTable);
+            sqLiteStatement.bindString(1, String.valueOf(eklenecekId));
+            sqLiteStatement.bindString(2, cityName);
+            sqLiteStatement.execute();
 
+            Cursor cursor = database.rawQuery(strSqlQuery, null);
+
+            int cityNameIx = cursor.getColumnIndex(columnIndexCityName);
+            int idIx = cursor.getColumnIndex(columnIndexCityId);
+
+            while (cursor.moveToNext()) {
+                System.out.println("Id: " + cursor.getInt(idIx));
+                System.out.println("Şehir: " + cursor.getString(cityNameIx));
+            }
+            cursor.close();
+        }else{
+            Toast.makeText(context, alreadyExistSqlWarningText,Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void deleteDatabase(Context context) {
+        SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
+        database.execSQL(deleteSqlTable);
+    }
+
+    public void readDatabase(Context context) {
         SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
         database.execSQL(createSqlTable);
-        String toCompile = insertSqlTable;
-        SQLiteStatement sqLiteStatement = database.compileStatement(toCompile);
-        sqLiteStatement.bindString(1, String.valueOf(eklenecekId));
-        sqLiteStatement.bindString(2, cityName);
-        sqLiteStatement.execute();
         Cursor cursor = database.rawQuery(strSqlQuery, null);
 
         int cityNameIx = cursor.getColumnIndex(columnIndexCityName);
@@ -74,13 +90,24 @@ public class LocalDataClass extends AppCompatActivity {
         cursor.close();
     }
 
-    private int servistenGirilenSehrinIdsiniCek(String cityName) {
-        CityService.getInstance().getCityId(cityName);
-        return CityService.getInstance().getCityId(cityName);
-    }
+    public boolean databaseControl(String eklenecekSehir ,Context context) {
+        boolean sehirVar = false;
 
-    public void deleteDatabase(Context context) {
-        SQLiteDatabase database = context.getApplicationContext().openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
-        database.execSQL(deleteSqlCommand);
+        try {
+            SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
+            Cursor cursor = database.rawQuery(strSqlQuery, null);
+            int cityNameIx = cursor.getColumnIndex(columnIndexCityName);
+
+            while (cursor.moveToNext()) {
+                if (cursor.getString(cityNameIx).matches(eklenecekSehir)) {
+                    sehirVar = true;
+                }
+            }
+            cursor.close();
+
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        return sehirVar;
     }
 }
