@@ -41,8 +41,7 @@ public class AddCityFragment extends Fragment {
     private void configureListener() {
         addButton.setOnClickListener(view -> {
             try {
-                String enteredCityName = editText.getText().toString();
-                CityService.getInstance().writeDataLocalDatabase(enteredCityName, view);
+                CityService.getInstance().writeDataLocalDatabase(editText.getText().toString(), view);
             } catch (Exception e) {
                 System.out.println("Data write error: " + e.getLocalizedMessage());
             }
