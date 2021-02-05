@@ -3,30 +3,24 @@ package com.ahmettekin.WeatherApp.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class WeatherModel {
 
     @SerializedName("list")
     public ArrayList<WeatherItem> weatherItems;
-
-
-    public class WeatherItem {
-
+    
+    public class WeatherItem  {
         private Weather[] weather;
-
         private Main main;
-
         private Coord coord;
-
         private String name;
 
         public String getName() {
-
             return name;
-
         }
 
-        public Weather[] getWeather() {
+        public Weather[] getWeathers() {
             return weather;
         }
 
@@ -44,11 +38,9 @@ public class WeatherModel {
             private String description;
             private String icon;
 
-
             public int getSkyId() {
-
-
                 int picture = WeatherTypes.unknown.getWeatherImage();
+
                 for (MistTypes mistType : MistTypes.values()) {
                     if (this.main.matches(mistType.getMistType())) {
                         picture = WeatherTypes.mist.getWeatherImage();
@@ -61,16 +53,13 @@ public class WeatherModel {
                     }
                 }
                 return picture;
-
             }
-
 
             public long getId() {
                 return id;
             }
 
             public String getMain() {
-
                 return main;
             }
 
@@ -81,12 +70,9 @@ public class WeatherModel {
             public String getIcon() {
                 return icon;
             }
-
-
         }
 
         public class Main {
-
             private double temp;
             @SerializedName("feels_like")
             private double feelsLike;
@@ -120,7 +106,6 @@ public class WeatherModel {
             public double getHumidity() {
                 return humidity;
             }
-
         }
 
         public class Coord {
@@ -144,9 +129,19 @@ public class WeatherModel {
             }
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            WeatherItem that = (WeatherItem) o;
+            return name.equals(that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
     }
-
-
 }
 
 

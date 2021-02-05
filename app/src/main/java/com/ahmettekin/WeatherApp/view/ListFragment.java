@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
+import com.ahmettekin.WeatherApp.database.LocalDataClass;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
 import com.ahmettekin.WeatherApp.service.WeatherAPI;
 import com.google.gson.Gson;
@@ -29,19 +31,13 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ListFragment extends Fragment {
-
-   private ArrayList<WeatherModel.WeatherItem> weatherItems;
-   private Retrofit retrofit;
-   private RecyclerView recyclerView;
-   private RecyclerViewAdapter recyclerViewAdapter;
-   private CompositeDisposable compositeDisposable;
-   private String BASE_URL = "http://api.openweathermap.org/data/2.5/";
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
+    private ArrayList<WeatherModel.WeatherItem> weatherItems;
+    private Retrofit retrofit;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private CompositeDisposable compositeDisposable;
+    private final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
+    private final String databaseEmptyWarningText = "veritabanı boş";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,28 +47,31 @@ public class ListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        recyclerView = view.findViewById(R.id.recyclerView);
+        initViews(view);
         Gson gson = new GsonBuilder().setLenient().create();
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
+        try {
+            loadData();
+        } catch (Exception e) {
+            Toast.makeText(view.getContext(), databaseEmptyWarningText, Toast.LENGTH_SHORT).show();
+        }
+    }
 
-        loadData();
-
+    public void initViews(View view) {
+        recyclerView = view.findViewById(R.id.recyclerView);
     }
 
     private void loadData() {
-
-        final WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
-
+        WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
         compositeDisposable = new CompositeDisposable();
-        compositeDisposable.add(weatherAPI.getWeatherData()
+        String id = LocalDataClass.getInstance().idGetir(getActivity());
+        compositeDisposable.add(weatherAPI.getWeatherData(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                //.subscribe(this::handleResponse)
                 .subscribeWith(new DisposableObserver<WeatherModel>() {
 
                     @Override
@@ -82,19 +81,16 @@ public class ListFragment extends Fragment {
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-
                     }
 
                     @Override
                     public void onComplete() {
-
                     }
                 })
         );
     }
 
     public void handleResponse(WeatherModel weatherModel) {
-
         this.weatherItems = weatherModel.weatherItems;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewAdapter = new RecyclerViewAdapter(this.weatherItems);

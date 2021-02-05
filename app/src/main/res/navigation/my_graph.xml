@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_listFragment_to_cityDetailsFragment"
             app:destination="@id/cityDetailsFragment" />
+        <action
+            android:id="@+id/action_listFragment_to_addCityFragment"
+            app:destination="@id/addCityFragment" />
     </fragment>
     <fragment
         android:id="@+id/cityDetailsFragment"
@@ -38,5 +41,14 @@
         <argument
             android:name="lat"
             app:argType="float" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCityFragment"
+        android:name="com.ahmettekin.WeatherApp.view.AddCityFragment"
+        android:label="fragment_add_city"
+        tools:layout="@layout/fragment_add_city" >
+        <action
+            android:id="@+id/action_addCityFragment_to_listFragment"
+            app:destination="@id/listFragment" />
     </fragment>
 </navigation>
