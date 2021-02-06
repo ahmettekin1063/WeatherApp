@@ -61,7 +61,7 @@ public class ListFragment extends Fragment {
         }
     }
 
-    public void initViews(View view) {
+    private void initViews(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
     }
 
@@ -90,7 +90,7 @@ public class ListFragment extends Fragment {
         );
     }
 
-    public void handleResponse(WeatherModel weatherModel) {
+    private void handleResponse(WeatherModel weatherModel) {
         this.weatherItems = weatherModel.weatherItems;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewAdapter = new RecyclerViewAdapter(this.weatherItems);

@@ -21,7 +21,6 @@ public class AddCityFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getParentFragmentManager().beginTransaction().addToBackStack("ali");
         return inflater.inflate(R.layout.fragment_add_city, container, false);
     }
 
@@ -49,11 +48,11 @@ public class AddCityFragment extends Fragment {
         });
 
         deleteDatabaseButton.setOnClickListener(view -> {
-            LocalDataClass.getInstance().deleteDatabase(getContext());
+            LocalDataClass.getInstance().deleteDatabase(view.getContext());
         });
 
         readDatabaseButton.setOnClickListener(view -> {
-            LocalDataClass.getInstance().readDatabase(getContext());
+            LocalDataClass.getInstance().readDatabase(view.getContext());
         });
     }
 }
