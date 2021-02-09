@@ -52,7 +52,7 @@ public class AddCityFragment extends Fragment {
         });
 
         deleteDatabaseButton.setOnClickListener(view -> {
-            LocalDataClass.getInstance().deleteDatabase(view.getContext());
+            //for delete all local database
         });
 
         readDatabaseButton.setOnClickListener(view -> {
