@@ -57,7 +57,7 @@ public class CityService {
                         List<CityModel> responseList = response.body();
                         cityModels = new ArrayList<>(responseList);
                         boolean sehirBulundu = false;
-                        String enteredCityName = UpperCaseWords(cityName);
+                        String enteredCityName = upperCaseWords(cityName);
 
                         for (CityModel cityModel : cityModels) {
                             if (cityModel.name.matches(enteredCityName)) {
@@ -83,7 +83,7 @@ public class CityService {
             });
     }
 
-    private String UpperCaseWords(String line) {
+    private String upperCaseWords(String line) {
         line = line.trim().toLowerCase();
         String[] data = line.split("\\s");
         StringBuilder lineBuilder = new StringBuilder();

@@ -116,7 +116,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             if (weatherItem.getWeathers().length > 0) {
                 weatherObject = weatherItem.getWeathers()[0];
                 itemView.setBackgroundResource(weatherObject.getSkyId());
-                tvSky.setText(MessageFormat.format("Gökyüzü : {0}", UpperCaseWords(weatherObject.getDescription())));
+                tvSky.setText(MessageFormat.format("Gökyüzü : {0}", upperCaseWords(weatherObject.getDescription())));
                 String iconURL = HEAD_OF_ICON_PATH + weatherObject.getIcon() + END_OF_ICON_PATH;
                 Picasso.get().load(iconURL).into(imageView);
             }
@@ -125,7 +125,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             tvWeatherTemp.setText(MessageFormat.format("Sıcaklık : {0}{1}", weatherItem.getMain().getTemp(), DEGREE_SYMBOL));
         }
 
-        private String UpperCaseWords(String line) {
+        private String upperCaseWords(String line) {
             line = line.trim().toLowerCase();
             String[] data = line.split("\\s");
             StringBuilder lineBuilder = new StringBuilder();
