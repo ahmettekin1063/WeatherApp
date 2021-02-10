@@ -14,7 +14,7 @@ public class LocalDataClass {
     private final String insertSqlTable = "INSERT INTO cities(id, cityname) VALUES (?, ?)";
     private final String columnIndexCityName = "cityname";
     private final String columnIndexCityId = "id";
-    private final String deleteSqlTable = "DELETE FROM cities WHERE cityName=?";
+    private final String deleteSqlRecord = "DELETE FROM cities WHERE cityName=?";
     private final String alreadyExistSqlWarningText = "Şehir veritabanında zaten var";
     private static LocalDataClass localDataClass = null;
 
@@ -72,7 +72,7 @@ public class LocalDataClass {
 
     public void deleteDatabase(Context context, String cityToBeDeleted) {
         SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
-        SQLiteStatement sqLiteStatement = database.compileStatement(deleteSqlTable);
+        SQLiteStatement sqLiteStatement = database.compileStatement(deleteSqlRecord);
         sqLiteStatement.bindString(1, String.valueOf(cityToBeDeleted));
         sqLiteStatement.execute();
     }

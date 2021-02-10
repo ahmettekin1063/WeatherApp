@@ -2,7 +2,6 @@ package com.ahmettekin.WeatherApp.adapter;
 
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -62,21 +61,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             MenuInflater inflater = popup.getMenuInflater();
             inflater.inflate(R.menu.recycler_menu, popup.getMenu());
             popup.show();
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-
-                    switch (item.getItemId()) {
-                        case R.id.action_delete:
-                            Toast.makeText(v.getContext(), weatherItemList.get(position).getName(), Toast.LENGTH_SHORT).show();
-                            LocalDataClass.getInstance().deleteDatabase(v.getContext(), weatherItemList.get(position).getName());
-                            NavDirections navDirections = ListFragmentDirections.actionListFragmentSelf();
-                            Navigation.findNavController(v).navigate(navDirections);
-                            return true;
-                        default:
-                    }
-                    return false;
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        Toast.makeText(v.getContext(), weatherItemList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                        LocalDataClass.getInstance().deleteDatabase(v.getContext(), weatherItemList.get(position).getName());
+                        NavDirections navDirections = ListFragmentDirections.actionListFragmentSelf();
+                        Navigation.findNavController(v).navigate(navDirections);
+                        return true;
+                    default:
                 }
+                return false;
             });
         });
     }
