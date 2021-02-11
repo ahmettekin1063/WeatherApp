@@ -28,7 +28,6 @@ public class CityService {
     private static final String BASE_URL = "https://raw.githubusercontent.com/";
     private static CityService cityService = null;
     private static final String cityNotFoundText = "Aradığınız Şehir Bulunamadı";
-    private static final String cityAddedText = " şehri başarılı bir şekilde eklendi";
 
     private CityService() {
     }
@@ -63,7 +62,6 @@ public class CityService {
                         if (cityModel.name.matches(enteredCityName)) {
                             LocalDataClass.getInstance().veriYaz(cityModel.name, cityModel.id, view.getContext());
                             sehirBulundu = true;
-                            Toast.makeText(view.getContext(), cityModel.name + cityAddedText, Toast.LENGTH_SHORT).show();
                             break;
                         }
                     }

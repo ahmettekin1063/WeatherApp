@@ -17,6 +17,7 @@ public class LocalDataClass {
     private final String deleteSqlRecord = "DELETE FROM cities WHERE cityName=?";
     private final String alreadyExistSqlWarningText = "Şehir veritabanında zaten var";
     private static LocalDataClass localDataClass = null;
+    private static final String cityAddedText = " şehri başarılı bir şekilde eklendi";
 
     private LocalDataClass() {
     }
@@ -54,6 +55,7 @@ public class LocalDataClass {
             sqLiteStatement.bindString(1, String.valueOf(eklenecekId));
             sqLiteStatement.bindString(2, cityName);
             sqLiteStatement.execute();
+            Toast.makeText(context, cityName + cityAddedText, Toast.LENGTH_SHORT).show();
 
             Cursor cursor = database.rawQuery(strSqlQuery, null);
 

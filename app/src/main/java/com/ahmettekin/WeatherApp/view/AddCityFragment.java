@@ -2,6 +2,8 @@ package com.ahmettekin.WeatherApp.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,8 +20,20 @@ import com.ahmettekin.WeatherApp.service.CityService;
 
 public class AddCityFragment extends Fragment {
     private EditText editText;
-    private Button addButton, deleteDatabaseButton, readDatabaseButton;
+    private Button addButton, readDatabaseButton;
     private ProgressBar progressBar;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,16 +41,15 @@ public class AddCityFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initViews(view);
+    public void onViewCreated(@NonNull View view2, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view2, savedInstanceState);
+        initViews(view2);
         configureListener();
     }
 
     private void initViews(View view) {
         editText = view.findViewById(R.id.editText);
         addButton = view.findViewById(R.id.addButton);
-        deleteDatabaseButton = view.findViewById(R.id.deleteDatabaseButton);
         readDatabaseButton = view.findViewById(R.id.readDatabaseButton);
         progressBar = view.findViewById(R.id.progressBar);
     }
@@ -49,10 +62,6 @@ public class AddCityFragment extends Fragment {
             } catch (Exception e) {
                 System.out.println("Data write error: " + e.getLocalizedMessage());
             }
-        });
-
-        deleteDatabaseButton.setOnClickListener(view -> {
-            //for delete all local database
         });
 
         readDatabaseButton.setOnClickListener(view -> {

@@ -64,8 +64,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case R.id.action_delete:
-                        Toast.makeText(v.getContext(), weatherItemList.get(position).getName(), Toast.LENGTH_SHORT).show();
-                        LocalDataClass.getInstance().deleteDatabase(v.getContext(), weatherItemList.get(position).getName());
+                        String deletingCity = weatherItemList.get(position).getName().split(" ")[0];
+                        Toast.makeText(v.getContext(), deletingCity, Toast.LENGTH_SHORT).show();
+                        LocalDataClass.getInstance().deleteDatabase(v.getContext(), deletingCity);
                         NavDirections navDirections = ListFragmentDirections.actionListFragmentSelf();
                         Navigation.findNavController(v).navigate(navDirections);
                         return true;
