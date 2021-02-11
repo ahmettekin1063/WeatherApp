@@ -11,45 +11,44 @@
 
     <TextView
         android:id="@+id/tvWeatherDescription"
-        android:layout_width="194dp"
-        android:layout_height="39dp"
+        android:layout_width="160dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="19dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="21dp"
+        android:layout_marginBottom="20dp"
         android:textColor="@android:color/white"
         android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvWeatherTemp"
         app:layout_constraintEnd_toStartOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvWeatherTemp"
-        android:layout_width="196dp"
-        android:layout_height="30dp"
+        android:layout_width="160dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="21dp"
+        android:layout_marginBottom="22dp"
         android:textColor="@android:color/white"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvSky"
         app:layout_constraintEnd_toStartOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWeatherDescription" />
 
     <TextView
         android:id="@+id/tvSky"
-        android:layout_width="197dp"
-        android:layout_height="31dp"
+        android:layout_width="160dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginBottom="45dp"
+        android:layout_marginBottom="29dp"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvWeatherTemp"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/tvWeatherTemp" />
 
     <ImageView
         android:id="@+id/imageView"
