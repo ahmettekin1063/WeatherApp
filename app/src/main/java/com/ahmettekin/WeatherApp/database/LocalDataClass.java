@@ -58,7 +58,6 @@ public class LocalDataClass {
             Toast.makeText(context, cityName + cityAddedText, Toast.LENGTH_SHORT).show();
 
             Cursor cursor = database.rawQuery(strSqlQuery, null);
-
             int cityNameIx = cursor.getColumnIndex(columnIndexCityName);
             int idIx = cursor.getColumnIndex(columnIndexCityId);
 
