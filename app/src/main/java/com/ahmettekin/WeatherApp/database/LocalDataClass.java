@@ -71,7 +71,7 @@ public class LocalDataClass {
         }
     }
 
-    public void deleteDatabase(Context context, String cityToBeDeleted) {
+    public void deleteCityFromDatabase(Context context, String cityToBeDeleted) {
         SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
         SQLiteStatement sqLiteStatement = database.compileStatement(deleteSqlRecord);
         sqLiteStatement.bindString(1, String.valueOf(cityToBeDeleted));

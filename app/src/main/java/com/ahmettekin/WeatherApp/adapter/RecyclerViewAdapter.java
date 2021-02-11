@@ -66,7 +66,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     case R.id.action_delete:
                         String nameOfCityToBeDeleted = weatherItemList.get(position).getName().split(" ")[0];
                         Toast.makeText(v.getContext(), nameOfCityToBeDeleted, Toast.LENGTH_SHORT).show();
-                        LocalDataClass.getInstance().deleteDatabase(v.getContext(), nameOfCityToBeDeleted);
+                        LocalDataClass.getInstance().deleteCityFromDatabase(v.getContext(), nameOfCityToBeDeleted);
                         NavDirections navDirections = ListFragmentDirections.actionListFragmentSelf();
                         Navigation.findNavController(v).navigate(navDirections);
                         return true;

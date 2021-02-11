@@ -41,9 +41,9 @@ public class AddCityFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view2, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view2, savedInstanceState);
-        initViews(view2);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViews(view);
         configureListener();
     }
 
