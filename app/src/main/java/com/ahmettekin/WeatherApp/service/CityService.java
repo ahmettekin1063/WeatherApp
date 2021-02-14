@@ -28,7 +28,6 @@ public class CityService {
     private static final String BASE_URL = "https://raw.githubusercontent.com/";
     private static CityService cityService = null;
     private static final String cityNotFoundText = "Aradığınız Şehir Bulunamadı";
-    private static final String cityAddedText = " şehri başarılı bir şekilde eklendi";
 
     private CityService() {
     }
@@ -41,49 +40,48 @@ public class CityService {
     }
 
     public void writeDataLocalDatabase(String cityName, View view) {
-            Gson gson = new GsonBuilder().setLenient().create();
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
+        Gson gson = new GsonBuilder().setLenient().create();
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
 
-            CityAPI cityAPI = retrofit.create(CityAPI.class);
-            Call<List<CityModel>> call = cityAPI.getData();
-            call.enqueue(new Callback<List<CityModel>>() {
-                @Override
-                public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
-                    if (response.isSuccessful()) {
-                        List<CityModel> responseList = response.body();
-                        cityModels = new ArrayList<>(responseList);
-                        boolean sehirBulundu = false;
-                        String enteredCityName = UpperCaseWords(cityName);
+        CityAPI cityAPI = retrofit.create(CityAPI.class);
+        Call<List<CityModel>> call = cityAPI.getData();
+        call.enqueue(new Callback<List<CityModel>>() {
+            @Override
+            public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
+                if (response.isSuccessful()) {
+                    List<CityModel> responseList = response.body();
+                    cityModels = new ArrayList<>(responseList);
+                    boolean sehirBulundu = false;
+                    String enteredCityName = upperCaseWords(cityName);
 
-                        for (CityModel cityModel : cityModels) {
-                            if (cityModel.name.matches(enteredCityName)) {
-                                LocalDataClass.getInstance().veriYaz(cityModel.name, cityModel.id, view.getContext());
-                                sehirBulundu = true;
-                                Toast.makeText(view.getContext(), cityModel.name + cityAddedText, Toast.LENGTH_SHORT).show();
-                                break;
-                            }
+                    for (CityModel cityModel : cityModels) {
+                        if (cityModel.name.matches(enteredCityName)) {
+                            LocalDataClass.getInstance().veriYaz(cityModel.name, cityModel.id, view.getContext());
+                            sehirBulundu = true;
+                            break;
                         }
-
-                        if (!sehirBulundu) {
-                            Toast.makeText(view.getContext(), cityNotFoundText, Toast.LENGTH_SHORT).show();
-                        }
-                        NavDirections navDirections = AddCityFragmentDirections.actionAddCityFragmentToListFragment();
-                        Navigation.findNavController(view).navigate(navDirections);
                     }
-                }
 
-                @Override
-                public void onFailure(Call<List<CityModel>> call, Throwable t) {
-                    t.printStackTrace();
+                    if (!sehirBulundu) {
+                        Toast.makeText(view.getContext(), cityNotFoundText, Toast.LENGTH_SHORT).show();
+                    }
+                    NavDirections navDirections = AddCityFragmentDirections.actionAddCityFragmentToListFragment();
+                    Navigation.findNavController(view).navigate(navDirections);
                 }
-            });
+            }
+
+            @Override
+            public void onFailure(Call<List<CityModel>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
-    private String UpperCaseWords(String line) {
+    private String upperCaseWords(String line) {
         line = line.trim().toLowerCase();
         String[] data = line.split("\\s");
         StringBuilder lineBuilder = new StringBuilder();

@@ -1,17 +1,25 @@
 package com.ahmettekin.WeatherApp.adapter;
 
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.ahmettekin.WeatherApp.R;
+import com.ahmettekin.WeatherApp.database.LocalDataClass;
 import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
 import com.ahmettekin.WeatherApp.view.ListFragmentDirections;
 import com.squareup.picasso.Picasso;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -45,8 +53,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                                     (float) weatherItemList.get(position).getMain().getTemp(),
                                     (float) weatherItemList.get(position).getCoord().getLon(),
                                     (float) weatherItemList.get(position).getCoord().getLat());
-
             Navigation.findNavController(v).navigate(action);
+        });
+
+        holder.deleteImage.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(v.getContext(), holder.deleteImage);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.recycler_menu, popup.getMenu());
+            popup.show();
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        String nameOfCityToBeDeleted = weatherItemList.get(position).getName().split(" ")[0];
+                        Toast.makeText(v.getContext(), nameOfCityToBeDeleted, Toast.LENGTH_SHORT).show();
+                        LocalDataClass.getInstance().deleteCityFromDatabase(v.getContext(), nameOfCityToBeDeleted);
+                        NavDirections navDirections = ListFragmentDirections.actionListFragmentSelf();
+                        Navigation.findNavController(v).navigate(navDirections);
+                        return true;
+                    default:
+                }
+                return false;
+            });
         });
     }
 
@@ -60,6 +87,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView tvWeatherTemp;
         TextView tvSky;
         ImageView imageView;
+        ImageView deleteImage;
 
         public RowHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +103,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             tvWeatherTemp = itemView.findViewById(R.id.tvWeatherTemp);
             tvSky = itemView.findViewById(R.id.tvSky);
             imageView = itemView.findViewById(R.id.imageView);
+            deleteImage = itemView.findViewById(R.id.deleteImage);
         }
 
         private void configureUI(WeatherItem weatherItem) {
@@ -83,16 +112,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             if (weatherItem.getWeathers().length > 0) {
                 weatherObject = weatherItem.getWeathers()[0];
                 itemView.setBackgroundResource(weatherObject.getSkyId());
-                tvSky.setText(MessageFormat.format("Gökyüzü : {0}", UpperCaseWords(weatherObject.getDescription())));
+                tvSky.setText(MessageFormat.format("Gökyüzü : {0}", upperCaseWords(weatherObject.getDescription())));
                 String iconURL = HEAD_OF_ICON_PATH + weatherObject.getIcon() + END_OF_ICON_PATH;
                 Picasso.get().load(iconURL).into(imageView);
+                tvWeatherDescription.setText(weatherItem.getName());
+                tvWeatherTemp.setText(MessageFormat.format("Sıcaklık : {0}{1}", weatherItem.getMain().getTemp(), DEGREE_SYMBOL));
             }
-
-            tvWeatherDescription.setText(weatherItem.getName());
-            tvWeatherTemp.setText(MessageFormat.format("Sıcaklık : {0}{1}", weatherItem.getMain().getTemp(), DEGREE_SYMBOL));
         }
 
-        private String UpperCaseWords(String line) {
+        private String upperCaseWords(String line) {
             line = line.trim().toLowerCase();
             String[] data = line.split("\\s");
             StringBuilder lineBuilder = new StringBuilder();

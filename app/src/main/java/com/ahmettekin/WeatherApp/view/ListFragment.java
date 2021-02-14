@@ -68,7 +68,7 @@ public class ListFragment extends Fragment {
     private void loadData() {
         WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
         compositeDisposable = new CompositeDisposable();
-        String id = LocalDataClass.getInstance().idGetir(getActivity());
+        String id = LocalDataClass.getInstance().getCityIdFromDatabase(getActivity());
         compositeDisposable.add(weatherAPI.getWeatherData(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
