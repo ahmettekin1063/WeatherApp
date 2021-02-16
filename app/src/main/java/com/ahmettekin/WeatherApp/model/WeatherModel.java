@@ -3,14 +3,13 @@ package com.ahmettekin.WeatherApp.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class WeatherModel {
 
     @SerializedName("list")
     public ArrayList<WeatherItem> weatherItems;
-    
-    public class WeatherItem  {
+
+    public class WeatherItem {
         private Weather[] weather;
         private Main main;
         private Coord coord;
@@ -127,19 +126,6 @@ public class WeatherModel {
             public void setLat(double lat) {
                 this.lat = lat;
             }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            WeatherItem that = (WeatherItem) o;
-            return name.equals(that.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name);
         }
     }
 }

@@ -60,7 +60,7 @@ public class CityService {
 
                     for (CityModel cityModel : cityModels) {
                         if (cityModel.name.matches(enteredCityName)) {
-                            LocalDataClass.getInstance().veriYaz(cityModel.name, cityModel.id, view.getContext());
+                            LocalDataClass.getInstance().writeData(cityModel.name, cityModel.id, view.getContext());
                             sehirBulundu = true;
                             break;
                         }
