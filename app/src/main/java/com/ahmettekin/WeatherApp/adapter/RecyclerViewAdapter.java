@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
-import com.ahmettekin.WeatherApp.view.RecyclerViewOnClickListener;
+import com.ahmettekin.WeatherApp.listener.RecyclerViewOnClickListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.MessageFormat;

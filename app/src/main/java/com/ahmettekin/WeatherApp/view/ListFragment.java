@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
 import com.ahmettekin.WeatherApp.database.LocalDataClass;
+import com.ahmettekin.WeatherApp.listener.RecyclerViewOnClickListener;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
 import com.ahmettekin.WeatherApp.service.WeatherAPI;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

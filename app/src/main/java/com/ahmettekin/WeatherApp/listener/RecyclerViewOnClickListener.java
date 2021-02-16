@@ -1,4 +1,4 @@
-package com.ahmettekin.WeatherApp.view;
+package com.ahmettekin.WeatherApp.listener;
 
 import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
