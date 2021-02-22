@@ -37,7 +37,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ListFragment extends Fragment implements RecyclerViewOnClickListener {
+public class ListFragment extends Fragment {
     private ArrayList<WeatherModel.WeatherItem> weatherItems;
     private Retrofit retrofit;
     private RecyclerView recyclerView;
@@ -108,7 +108,39 @@ public class ListFragment extends Fragment implements RecyclerViewOnClickListene
     private void handleResponse(WeatherModel weatherModel) {
         this.weatherItems = weatherModel.weatherItems;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewAdapter = new RecyclerViewAdapter(this, this.weatherItems);
+        recyclerViewAdapter = new RecyclerViewAdapter(new RecyclerViewOnClickListener() {
+            @Override
+            public void recyclerViewDeleteClick(int position, ArrayList<WeatherModel.WeatherItem> weatherItemList, View view) {
+                PopupMenu popup = new PopupMenu(getContext(), view);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.recycler_menu, popup.getMenu());
+                popup.show();
+                popup.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_delete:
+                            String nameOfCityToBeDeleted = weatherItemList.get(position).getName().split(" ")[0];
+                            LocalDataClass.getInstance().deleteCityFromDatabase(getContext(), nameOfCityToBeDeleted);
+                            loadData();
+                            return true;
+                        default:
+                    }
+                    return false;
+                });
+            }
+
+            @Override
+            public void recyclerViewItemViewClick(int position, ArrayList<WeatherModel.WeatherItem> weatherItemList) {
+                ListFragmentDirections.ActionListFragmentToCityDetailsFragment action =
+                        ListFragmentDirections
+                                .actionListFragmentToCityDetailsFragment(weatherItemList.get(position).getName(),
+                                        (float) weatherItemList.get(position).getMain().getFeelsLike(),
+                                        (int) weatherItemList.get(position).getMain().getHumidity(),
+                                        (float) weatherItemList.get(position).getMain().getTemp(),
+                                        (float) weatherItemList.get(position).getCoord().getLon(),
+                                        (float) weatherItemList.get(position).getCoord().getLat());
+                Navigation.findNavController(getView()).navigate(action);
+            }
+        }, this.weatherItems);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
@@ -125,39 +157,7 @@ public class ListFragment extends Fragment implements RecyclerViewOnClickListene
         }
     }
 
-    @Override
-    public void recyclerViewDeleteClick(int position, ArrayList<WeatherModel.WeatherItem> weatherItemList, RecyclerViewAdapter.RowHolder holder) {
-        PopupMenu popup = new PopupMenu(getContext(), holder.deleteImage);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.recycler_menu, popup.getMenu());
-        popup.show();
-        popup.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.action_delete:
-                    String nameOfCityToBeDeleted = weatherItemList.get(position).getName().split(" ")[0];
-                    LocalDataClass.getInstance().deleteCityFromDatabase(getContext(), nameOfCityToBeDeleted);
-                    loadData();
-                    return true;
-                default:
-            }
-            return false;
-        });
-    }
-
-    @Override
-    public void recyclerViewItemViewClick(int position, ArrayList<WeatherModel.WeatherItem> weatherItemList) {
-        ListFragmentDirections.ActionListFragmentToCityDetailsFragment action =
-                ListFragmentDirections
-                        .actionListFragmentToCityDetailsFragment(weatherItemList.get(position).getName(),
-                                (float) weatherItemList.get(position).getMain().getFeelsLike(),
-                                (int) weatherItemList.get(position).getMain().getHumidity(),
-                                (float) weatherItemList.get(position).getMain().getTemp(),
-                                (float) weatherItemList.get(position).getCoord().getLon(),
-                                (float) weatherItemList.get(position).getCoord().getLat());
-        Navigation.findNavController(getView()).navigate(action);
-    }
-
-    public void configureListener(){
+    public void configureListener() {
         fab.setOnClickListener(v -> {
             alertDialogBuilder = new AlertDialog.Builder(getContext());
             removeFromSuperView((ViewGroup) alertDesign);

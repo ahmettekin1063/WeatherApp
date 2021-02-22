@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
 import com.ahmettekin.WeatherApp.listener.RecyclerViewOnClickListener;
+import com.ahmettekin.WeatherApp.utils.StringOperations;
 import com.squareup.picasso.Picasso;
 
 import java.text.MessageFormat;
@@ -48,7 +49,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             listener.recyclerViewItemViewClick(position, weatherItemList);
         });
         holder.deleteImage.setOnClickListener(v -> {
-            listener.recyclerViewDeleteClick(position, weatherItemList, holder);
+            listener.recyclerViewDeleteClick(position, weatherItemList, holder.deleteImage);
         });
     }
 
@@ -83,33 +84,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         private void configureUI(WeatherItem weatherItem) {
             WeatherItem.Weather weatherObject;
-
             if (weatherItem.getWeathers().length > 0) {
                 weatherObject = weatherItem.getWeathers()[0];
                 itemView.setBackgroundResource(weatherObject.getSkyId());
-                tvSky.setText(MessageFormat.format("Gökyüzü : {0}", upperCaseWords(weatherObject.getDescription())));
+                tvSky.setText(MessageFormat.format("Gökyüzü : {0}", StringOperations.upperCaseWords(weatherObject.getDescription())));
                 String iconURL = HEAD_OF_ICON_PATH + weatherObject.getIcon() + END_OF_ICON_PATH;
                 Picasso.get().load(iconURL).into(imageView);
                 tvWeatherDescription.setText(weatherItem.getName());
                 tvWeatherTemp.setText(MessageFormat.format("Sıcaklık : {0}{1}", weatherItem.getMain().getTemp(), DEGREE_SYMBOL));
             }
-        }
-
-        private String upperCaseWords(String line) {
-            line = line.trim().toLowerCase();
-            String[] data = line.split("\\s");
-            StringBuilder lineBuilder = new StringBuilder();
-
-            for (String datum : data) {
-                if (datum.length() > 1) {
-                    lineBuilder.append(datum.substring(0, 1).toUpperCase()).append(datum.substring(1)).append(" ");
-                } else {
-                    lineBuilder.append(datum.toUpperCase());
-                }
-            }
-
-            line = lineBuilder.toString();
-            return line.trim();
         }
     }
 }
