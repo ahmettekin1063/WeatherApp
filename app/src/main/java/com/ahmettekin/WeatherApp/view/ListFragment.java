@@ -23,6 +23,7 @@ import com.ahmettekin.WeatherApp.database.LocalDataClass;
 import com.ahmettekin.WeatherApp.listener.RecyclerViewOnClickListener;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
 import com.ahmettekin.WeatherApp.service.WeatherAPI;
+import com.ahmettekin.WeatherApp.utils.ViewOperations;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -150,17 +151,10 @@ public class ListFragment extends Fragment {
         compositeDisposable.clear();
     }
 
-    private void removeFromSuperView(ViewGroup childView) {
-        ViewGroup parent = (ViewGroup) childView.getParent();
-        if (parent != null) {
-            parent.removeView(childView);
-        }
-    }
-
     public void configureListener() {
         fab.setOnClickListener(v -> {
             alertDialogBuilder = new AlertDialog.Builder(getContext());
-            removeFromSuperView((ViewGroup) alertDesign);
+            ViewOperations.removeFromSuperView((ViewGroup) alertDesign);
             alertDialogBuilder.setView(alertDesign);
             alertDialogBuilder.setMessage("Add City");
             TextView cityName = alertDesign.findViewById(R.id.editTextCityName);
