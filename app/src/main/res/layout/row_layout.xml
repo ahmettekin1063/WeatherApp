@@ -11,8 +11,8 @@
 
     <TextView
         android:id="@+id/tvWeatherDescription"
-        android:layout_width="160dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="18dp"
         android:layout_marginEnd="21dp"
@@ -26,8 +26,8 @@
 
     <TextView
         android:id="@+id/tvWeatherTemp"
-        android:layout_width="160dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="21dp"
         android:layout_marginBottom="22dp"
@@ -40,8 +40,8 @@
 
     <TextView
         android:id="@+id/tvSky"
-        android:layout_width="160dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="29dp"
         android:textColor="@android:color/white"

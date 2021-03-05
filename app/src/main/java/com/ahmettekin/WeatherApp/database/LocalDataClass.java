@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.widget.Toast;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public class LocalDataClass {
@@ -32,7 +33,7 @@ public class LocalDataClass {
     public String getCityIdFromDatabase(Context context) {
         SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
         database.execSQL(createSqlTable);
-        StringBuilder groupIds = new StringBuilder();
+        StringBuilder groupIds = new StringBuilder("");
         Cursor cursor = database.rawQuery(strSqlQuery, null);
         int idIx = cursor.getColumnIndex(columnIndexCityId);
 
@@ -41,13 +42,14 @@ public class LocalDataClass {
             groupIds.append(id);
             groupIds.append(",");
         }
-
-        groupIds.deleteCharAt(groupIds.lastIndexOf(","));
+        if (groupIds.lastIndexOf(",") >= 0) {
+            groupIds.deleteCharAt(groupIds.lastIndexOf(","));
+        }
         cursor.close();
         return groupIds.toString();
     }
 
-    public void veriYaz(String cityName, int eklenecekId, Context context) {
+    public void writeData(String cityName, int eklenecekId, Context context) {
         if (!databaseControl(cityName, context)) {
             SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
             database.execSQL(createSqlTable);
@@ -66,8 +68,8 @@ public class LocalDataClass {
                 System.out.println("Şehir: " + cursor.getString(cityNameIx));
             }
             cursor.close();
-        }else{
-            Toast.makeText(context, alreadyExistSqlWarningText,Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, alreadyExistSqlWarningText, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -93,7 +95,7 @@ public class LocalDataClass {
         cursor.close();
     }
 
-    public boolean databaseControl(String eklenecekSehir ,Context context) {
+    public boolean databaseControl(String eklenecekSehir, Context context) {
         boolean sehirVar = false;
 
         try {
