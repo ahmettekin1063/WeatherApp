@@ -41,11 +41,6 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
     private final float VALUE_OF_ZOOM = 10f;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_city_details, container, false);
         initViews(view);
