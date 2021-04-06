@@ -18,8 +18,7 @@
         android:layout_centerHorizontal="true"
         android:innerRadius="0dp"
         android:shape="ring"
-        android:thicknessRatio="1.9"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MaterialCardView.Cut">
+        android:thicknessRatio="1.9">
 
         <ImageView
             android:id="@+id/deleteImage"
