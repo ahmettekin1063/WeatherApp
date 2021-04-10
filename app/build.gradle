@@ -1,9 +1,22 @@
 apply plugin: 'com.android.application'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'com.google.gms.google-services'
+apply plugin: "io.gitlab.arturbosch.detekt"
+check.dependsOn 'detekt'
+detekt {
+    allRules = false // activate all available (even unstable) rules.
+    config = files(file("$project.rootDir/tools/detekt.yml")) // point to your custom config defining rules to run, overwriting default behavior
+    buildUponDefaultConfig = true // preconfigure defaults
+    baseline = file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt
+
+    reports {
+        html.enabled = true // observe findings in your browser with structure and code snippets
+        xml.enabled = true // checkstyle like format mainly for integrations like Jenkins
+        txt.enabled = true // similar to the console output, contains issue signature to manually edit baseline files
+        sarif.enabled = true // standardized SARIF format (https://sarifweb.azurewebsites.net/) to support integrations with Github Code Scanning
+    }
+}
 android {
-
-
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
@@ -61,4 +74,5 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-storage:6.4.0'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+
 }
