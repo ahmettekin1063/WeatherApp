@@ -24,7 +24,10 @@
         tools:layout="@layout/city_details_fragment" >
         <action
             android:id="@+id/action_cityDetailsFragment_to_listFragment"
-            app:destination="@id/listFragment" />
+            app:destination="@id/listFragment"
+            app:launchSingleTop="false"
+            app:popUpTo="@id/cityDetailsFragment"
+            app:popUpToInclusive="false" />
         <argument
             android:name="name"
             app:argType="string" />
