@@ -33,7 +33,7 @@
             app:srcCompat="@drawable/ic_baseline_delete_24" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/imgWeatherSymbol"
             android:layout_width="108dp"
             android:layout_height="129dp"
             android:layout_marginLeft="230dp"
@@ -51,7 +51,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="140dp"
             android:text="Gökyüzü"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="@+id/tvWeatherTemp"
             app:layout_constraintTop_toBottomOf="@+id/tvWeatherTemp" />
@@ -63,7 +63,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="90dp"
             android:text="Hava durumu"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvCityName" />
@@ -75,7 +75,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="32dp"
             android:text="Şehir İsmi"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:textSize="25sp"
             app:layout_constraintStart_toStartOf="@+id/tvWeatherTemp"
             app:layout_constraintTop_toTopOf="parent" />

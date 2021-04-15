@@ -8,13 +8,11 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 object WeatherApiClient {
-
-    val BASE_URL="https://api.openweathermap.org/data/2.5/"
+    private const val BASE_URL="https://api.openweathermap.org/data/2.5/"
     private var retrofit: Retrofit? = null
-    var gson = GsonBuilder().setLenient().create()
-    val clientBuilder = OkHttpClient.Builder()
-    val loggingInterceptor= HttpLoggingInterceptor()
-
+    private val gson = GsonBuilder().setLenient().create()
+    private val clientBuilder = OkHttpClient.Builder()
+    private val loggingInterceptor= HttpLoggingInterceptor()
     val client: Retrofit?
         get() {
             if(retrofit ==null){
