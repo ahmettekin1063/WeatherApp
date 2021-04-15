@@ -1,12 +1,14 @@
 package com.ahmettekin.WeatherApp.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,19 +23,27 @@ import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
 import com.ahmettekin.WeatherApp.database.LocalDataClass;
 import com.ahmettekin.WeatherApp.listener.RecyclerViewOnClickListener;
+import com.ahmettekin.WeatherApp.model.CityModel;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
+import com.ahmettekin.WeatherApp.service.CityAPI;
+import com.ahmettekin.WeatherApp.service.CityService;
 import com.ahmettekin.WeatherApp.service.WeatherAPI;
 import com.ahmettekin.WeatherApp.utils.ViewOperations;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -48,12 +58,15 @@ public class ListFragment extends Fragment {
     private final String databaseEmptyWarningText = "veritabanı boş";
     private FloatingActionButton fab;
     private View alertDesign;
+    private SearchableSpinner searchableSpinner;
     private AlertDialog.Builder alertDialogBuilder;
+    private Context mContext;
+    private CityModel secilenSehir;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        alertDesign = inflater.inflate(R.layout.alert_view_tasarim, null, false);
+        alertDesign = inflater.inflate(R.layout.alert_view_tasarim, container, false);
         return view;
     }
 
@@ -61,6 +74,7 @@ public class ListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
+        spinnerConfigure();
         configureListener();
         Gson gson = new GsonBuilder().setLenient().create();
         retrofit = new Retrofit.Builder()
@@ -76,12 +90,14 @@ public class ListFragment extends Fragment {
         recyclerViewAdapter = new RecyclerViewAdapter(weatherItems);
         weatherItems = new ArrayList<>();
         fab = view.findViewById(R.id.floatingActionButton);
+        mContext = view.getContext();
+        searchableSpinner = alertDesign.findViewById(R.id.searchableSpinner);
     }
 
     private void loadData() {
         WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
         compositeDisposable = new CompositeDisposable();
-        String ids = LocalDataClass.getInstance().getCityIdFromDatabase(getActivity());
+        String ids = LocalDataClass.getInstance().getCityIdFromDatabase(mContext);
         compositeDisposable.add(weatherAPI.getWeatherData(ids)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -117,13 +133,11 @@ public class ListFragment extends Fragment {
                 inflater.inflate(R.menu.recycler_menu, popup.getMenu());
                 popup.show();
                 popup.setOnMenuItemClickListener(item -> {
-                    switch (item.getItemId()) {
-                        case R.id.action_delete:
-                            String nameOfCityToBeDeleted = weatherItemList.get(position).getName().split(" ")[0];
-                            LocalDataClass.getInstance().deleteCityFromDatabase(getContext(), nameOfCityToBeDeleted);
-                            loadData();
-                            return true;
-                        default:
+                    if (item.getItemId() == R.id.action_delete) {
+                        int idOfCityToBeDeleted = weatherItemList.get(position).getId();
+                        LocalDataClass.getInstance().deleteCityFromDatabase(mContext, idOfCityToBeDeleted);
+                        loadData();
+                        return true;
                     }
                     return false;
                 });
@@ -142,6 +156,7 @@ public class ListFragment extends Fragment {
                 Navigation.findNavController(getView()).navigate(action);
             }
         }, this.weatherItems);
+
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
@@ -153,19 +168,53 @@ public class ListFragment extends Fragment {
 
     public void configureListener() {
         fab.setOnClickListener(v -> {
-            alertDialogBuilder = new AlertDialog.Builder(getContext());
+            alertDialogBuilder = new AlertDialog.Builder(mContext);
             ViewOperations.removeFromSuperView((ViewGroup) alertDesign);
             alertDialogBuilder.setView(alertDesign);
-            alertDialogBuilder.setMessage("Add City");
-            TextView cityName = alertDesign.findViewById(R.id.editTextCityName);
-
             alertDialogBuilder.setPositiveButton("Kaydet", (dialog, which) -> {
-                Toast.makeText(getContext(), "kaydet" + cityName.getText().toString(), Toast.LENGTH_SHORT).show();
+                LocalDataClass.getInstance().writeData(secilenSehir.name, secilenSehir.id, getContext());
+                loadData();
             });
-            alertDialogBuilder.setNegativeButton("iptal", (dialog, which) -> {
-                Toast.makeText(getContext(), "iptal tıklandı", Toast.LENGTH_SHORT).show();
-            });
+            alertDialogBuilder.setNegativeButton("iptal", (dialog, which) -> {});
             alertDialogBuilder.create().show();
+        });
+    }
+
+    private void spinnerConfigure(){
+        CityAPI cityAPI = CityService.getInstance().getRetrofit().create(CityAPI.class);
+        Call<List<CityModel>> call = cityAPI.getData();
+        call.enqueue(new Callback<List<CityModel>>() {
+            @Override
+            public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
+
+                if (response.isSuccessful()) {
+                    ArrayList<CityModel> cityList=new ArrayList<>();
+                    ArrayList<String> cityNameList=new ArrayList<>();
+
+                    for (CityModel temp :response.body()) {
+                        cityList.add(temp);
+                        cityNameList.add(temp.name);
+                    }
+
+                    ArrayAdapter<String> spnAdapter = new ArrayAdapter<>(mContext, R.layout.spinner_tek_satir, cityNameList);
+                    spnAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    searchableSpinner.setTitle("Şehir Seç");
+                    searchableSpinner.setPositiveButton("SEÇ");
+                    searchableSpinner.setAdapter(spnAdapter);
+                    searchableSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            secilenSehir=cityList.get(position);
+                        }
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {}
+                    });
+                }
+            }
+            @Override
+            public void onFailure(Call<List<CityModel>> call, Throwable t) {
+                t.printStackTrace();
+            }
         });
     }
 }
