@@ -12,7 +12,7 @@ import com.ahmettekin.weatherappkotlin.upperCaseWords
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row_layout.view.*
 
-class RecyclerViewAdapter(private val myList: List<WeatherModel.WeatherItem>, val listener:RecyclerViewListener) :
+class RecyclerViewAdapter(private val myList: List<WeatherModel.WeatherItem>, private val listener:RecyclerViewListener) :
     RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>() {
     private val DEGREE_SYMBOL = "\u2103"
     private val HEAD_OF_ICON_PATH = "https://openweathermap.org/img/wn/"
@@ -28,12 +28,15 @@ class RecyclerViewAdapter(private val myList: List<WeatherModel.WeatherItem>, va
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.itemView.tvCityName.text = myList[position].name
-        holder.itemView.tvSky.text = myList[position].weather?.get(0)?.description?.upperCaseWords()
-        ("Sıcaklık: "+ myList[position].main?.temp.toString()+DEGREE_SYMBOL).also { holder.itemView.tvWeatherTemp.text = it }
+        holder.itemView.tvSky.text = myList[position].weather[0].description.upperCaseWords()
+        ("Sıcaklık: "+ myList[position].main.temp.toString()+DEGREE_SYMBOL).also { holder.itemView.tvWeatherTemp.text = it }
         holder.itemView.cardView.setBackgroundResource(myList[position].getSkyImage())
-        Picasso.get().load(HEAD_OF_ICON_PATH + myList[position].weather?.get(0)?.icon + END_OF_ICON_PATH).into(holder.itemView.imgWeatherSymbol)
+        Picasso.get().load(HEAD_OF_ICON_PATH + myList[position].weather[0].icon + END_OF_ICON_PATH).into(holder.itemView.imgWeatherSymbol)
         holder.itemView.deleteImage.setOnClickListener {
             listener.recyclerViewItemClick(myList[position],holder.itemView.deleteImage)
+        }
+        holder.itemView.setOnClickListener {
+            listener.recyclerViewItemClick(myList[position],null)
         }
     }
 

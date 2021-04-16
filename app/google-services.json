@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "104777396767",
+    "project_id": "weatherappkotlin-e993e",
+    "storage_bucket": "weatherappkotlin-e993e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104777396767:android:55d47f14a0bb6dcd66db2a",
+        "android_client_info": {
+          "package_name": "com.ahmettekin.weatherappkotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104777396767-3a2ooghgq4mg53eusc0i9r9s2utjfc8t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAa3rEsmuDbv80dtthKI_ct3Xe2p1PRNNE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104777396767-3a2ooghgq4mg53eusc0i9r9s2utjfc8t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

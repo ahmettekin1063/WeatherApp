@@ -4,5 +4,5 @@ import android.view.View
 import com.ahmettekin.weatherappkotlin.model.WeatherModel
 
 interface RecyclerViewListener {
-    fun recyclerViewItemClick(weatherItem: WeatherModel.WeatherItem?, deleteView: View?)
+    fun recyclerViewItemClick(weatherItem: WeatherModel.WeatherItem, deleteView: View?)
 }

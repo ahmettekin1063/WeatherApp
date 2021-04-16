@@ -1,5 +1,6 @@
 package com.ahmettekin.weatherappkotlin.view
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
@@ -10,13 +11,15 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ahmettekin.weatherappkotlin.model.City
 import com.ahmettekin.weatherappkotlin.R
 import com.ahmettekin.weatherappkotlin.adapter.RecyclerViewAdapter
 import com.ahmettekin.weatherappkotlin.database.LocalDatabase
 import com.ahmettekin.weatherappkotlin.listener.RecyclerViewListener
+import com.ahmettekin.weatherappkotlin.model.City
 import com.ahmettekin.weatherappkotlin.model.WeatherModel
 import com.ahmettekin.weatherappkotlin.removeFromSuperView
 import com.ahmettekin.weatherappkotlin.service.WeatherApiClient
@@ -40,6 +43,9 @@ class ListFragment : Fragment() {
     private var selectedCity: City? = null
     private var requestQueue:RequestQueue?=null
     private lateinit var recyclerViewAdapter:RecyclerViewAdapter
+    private val databaseEmptyWarningText = "veritabanı boş"
+    private lateinit var mView: View
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mContainer = container
@@ -55,6 +61,7 @@ class ListFragment : Fragment() {
     }
 
     private fun initialization(view: View) {
+        mView=view
         mContext = view.context
         requestQueue=Volley.newRequestQueue(mContext)
         alertView = layoutInflater.inflate(R.layout.alert_view_layout, mContainer, false)
@@ -73,7 +80,7 @@ class ListFragment : Fragment() {
                 }
 
                 override fun onError(e: Throwable) {
-                    Log.e("Hata:", "${e}")
+                    Log.e("Hata:", "$e")
                 }
 
                 override fun onComplete() {}
@@ -85,29 +92,36 @@ class ListFragment : Fragment() {
     private fun handleResponse(weatherModel: WeatherModel) {
         recyclerView.layoutManager = LinearLayoutManager(context)
         val myList= weatherModel.list as ArrayList
-        recyclerViewAdapter= RecyclerViewAdapter(myList,object :RecyclerViewListener{
-            override fun recyclerViewItemClick(weatherItem: WeatherModel.WeatherItem?, deleteView: View?) {
-                val popupMenu=PopupMenu(mContext,deleteView)
-                val inflater=popupMenu.menuInflater
-                inflater.inflate(R.menu.recycler_delete_item,popupMenu.menu)
-                popupMenu.show()
-                popupMenu.setOnMenuItemClickListener { menuItem->
-                    when(menuItem.itemId){
-                        R.id.action_delete-> {
-                            LocalDatabase.deleteCityFromDatabase(mContext, weatherItem?.id)
-                            if(LocalDatabase.getCityIdFromDatabase(mContext) == ""){
-                                myList.clear()
-                                recyclerViewAdapter.notifyDataSetChanged()
-                            }else{
-                                loadData()
-                            }
+        recyclerViewAdapter= RecyclerViewAdapter(myList, object : RecyclerViewListener {
 
+            override fun recyclerViewItemClick(weatherItem: WeatherModel.WeatherItem, deleteView: View?) {
+                if (deleteView != null) {
+                    val popupMenu = PopupMenu(mContext, deleteView)
+                    val inflater = popupMenu.menuInflater
+                    inflater.inflate(R.menu.recycler_delete_item, popupMenu.menu)
+                    popupMenu.show()
+                    popupMenu.setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.action_delete -> {
+                                LocalDatabase.deleteCityFromDatabase(mContext, weatherItem.id)
+                                if (LocalDatabase.getCityIdFromDatabase(mContext) == "") {
+                                    myList.clear()
+                                    recyclerViewAdapter.notifyDataSetChanged()
+                                    Toast.makeText(context, databaseEmptyWarningText, Toast.LENGTH_SHORT).show()
+                                } else {
+                                    loadData()
+                                }
+                            }
                         }
+                        true
                     }
-                    true
+                }else{
+                    val action=ListFragmentDirections.actionListFragmentToCityDetailsFragment(weatherItem.name
+                    ,weatherItem.main.feelsLike.toFloat(),weatherItem.main.humidity,weatherItem.main.temp.toFloat()
+                    ,weatherItem.coord.lon.toFloat(),weatherItem.coord.lat.toFloat())
+                    Navigation.findNavController(mView).navigate(action)
                 }
             }
-
         })
         recyclerView.adapter=recyclerViewAdapter
     }
