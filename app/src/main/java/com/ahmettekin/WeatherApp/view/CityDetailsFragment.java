@@ -42,16 +42,15 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_city_details, container, false);
-        initViews(view);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
-        return view;
+        return inflater.inflate(R.layout.fragment_city_details, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initViews(view);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
         configureUI();
     }
 
