@@ -87,7 +87,7 @@ public class ListFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        mView=view;
+        mView = view;
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerViewAdapter = new RecyclerViewAdapter(weatherItems);
         weatherItems = new ArrayList<>();
@@ -112,11 +112,12 @@ public class ListFragment extends Fragment {
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        Log.e("HATA:",e.getLocalizedMessage());
+                        Log.e("HATA:", e.getLocalizedMessage());
                     }
 
                     @Override
-                    public void onComplete() {}
+                    public void onComplete() {
+                    }
                 })
         );
     }
@@ -124,10 +125,10 @@ public class ListFragment extends Fragment {
     private void handleResponse(WeatherModel weatherModel) {
         this.weatherItems = weatherModel.weatherItems;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewAdapter = new RecyclerViewAdapter((weatherItem, deleteView) -> {
-
-            if (deleteView != null) {
-                PopupMenu popup = new PopupMenu(getContext(), deleteView);
+        recyclerViewAdapter = new RecyclerViewAdapter((holder, weatherItem, view) -> {
+//onItemSelectedListener' e benzetme yapılabilir.
+            if (view == holder.deleteImage) {
+                PopupMenu popup = new PopupMenu(getContext(), view);
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.recycler_delete_item, popup.getMenu());
                 popup.show();
@@ -135,11 +136,11 @@ public class ListFragment extends Fragment {
                     if (item.getItemId() == R.id.action_delete) {
                         int idOfCityToBeDeleted = weatherItem.getId();
                         LocalDataClass.getInstance().deleteCityFromDatabase(mContext, idOfCityToBeDeleted);
-                        if(LocalDataClass.getInstance().getCityIdFromDatabase(mContext).equals("")){
+                        if (LocalDataClass.getInstance().getCityIdFromDatabase(mContext).equals("")) {
                             weatherItems.clear();
                             recyclerViewAdapter.notifyDataSetChanged();
                             Toast.makeText(getContext(), databaseEmptyWarningText, Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             loadData();
                         }
                         return true;
@@ -193,9 +194,11 @@ public class ListFragment extends Fragment {
                     ArrayList<CityModel> cityList = new ArrayList<>();
                     ArrayList<String> cityNameList = new ArrayList<>();
 
-                    for (CityModel temp : response.body()) {
-                        cityList.add(temp);
-                        cityNameList.add(temp.name);
+                    if (response.body() != null) {
+                        for (CityModel temp : response.body()) {
+                            cityList.add(temp);
+                            cityNameList.add(temp.name);
+                        }
                     }
 
                     ArrayAdapter<String> spnAdapter = new ArrayAdapter<>(mContext, R.layout.spinner_tek_satir, cityNameList);

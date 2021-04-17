@@ -2,10 +2,9 @@ package com.ahmettekin.WeatherApp.listener;
 
 import android.view.View;
 
+import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
 
-import javax.annotation.Nullable;
-
 public interface RecyclerViewOnClickListener {
-    void recyclerViewItemViewClick(WeatherModel.WeatherItem weatherItem, @Nullable View deleteView);
+    void recyclerViewItemViewClick(RecyclerViewAdapter.RowHolder holder, WeatherModel.WeatherItem weatherItem, View view);
 }

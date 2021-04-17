@@ -46,11 +46,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.RowHolder holder, int position) {
         holder.bind(weatherItemList.get(position));
-        holder.itemView.setOnClickListener(v -> {
-            listener.recyclerViewItemViewClick(weatherItemList.get(position),null);
+        holder.itemView.setOnClickListener(view -> {
+            listener.recyclerViewItemViewClick(holder, weatherItemList.get(position),view);
         });
-        holder.deleteImage.setOnClickListener(v -> {
-            listener.recyclerViewItemViewClick(weatherItemList.get(position), holder.deleteImage);
+        holder.deleteImage.setOnClickListener(view -> {
+            listener.recyclerViewItemViewClick(holder, weatherItemList.get(position), view);
         });
     }
 
