@@ -2,6 +2,7 @@ package com.ahmettekin.WeatherApp.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -22,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
 import com.ahmettekin.WeatherApp.database.LocalDataClass;
-import com.ahmettekin.WeatherApp.listener.RecyclerViewOnClickListener;
 import com.ahmettekin.WeatherApp.model.CityModel;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
 import com.ahmettekin.WeatherApp.service.CityAPI;
@@ -62,6 +62,7 @@ public class ListFragment extends Fragment {
     private AlertDialog.Builder alertDialogBuilder;
     private Context mContext;
     private CityModel secilenSehir;
+    private View mView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,6 +87,7 @@ public class ListFragment extends Fragment {
     }
 
     private void initViews(View view) {
+        mView = view;
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerViewAdapter = new RecyclerViewAdapter(weatherItems);
         weatherItems = new ArrayList<>();
@@ -110,9 +112,7 @@ public class ListFragment extends Fragment {
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        weatherItems.clear();
-                        recyclerViewAdapter.notifyDataSetChanged();
-                        Toast.makeText(getContext(), databaseEmptyWarningText, Toast.LENGTH_SHORT).show();
+                        Log.e("HATA:", e.getLocalizedMessage());
                     }
 
                     @Override
@@ -125,38 +125,40 @@ public class ListFragment extends Fragment {
     private void handleResponse(WeatherModel weatherModel) {
         this.weatherItems = weatherModel.weatherItems;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewAdapter = new RecyclerViewAdapter(new RecyclerViewOnClickListener() {
-            @Override
-            public void recyclerViewDeleteClick(int position, ArrayList<WeatherModel.WeatherItem> weatherItemList, View view) {
+        recyclerViewAdapter = new RecyclerViewAdapter((holder, weatherItem, view) -> {
+//onItemSelectedListener' e benzetme yapılabilir.
+            if (view == holder.deleteImage) {
                 PopupMenu popup = new PopupMenu(getContext(), view);
                 MenuInflater inflater = popup.getMenuInflater();
-                inflater.inflate(R.menu.recycler_menu, popup.getMenu());
+                inflater.inflate(R.menu.recycler_delete_item, popup.getMenu());
                 popup.show();
                 popup.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.action_delete) {
-                        int idOfCityToBeDeleted = weatherItemList.get(position).getId();
+                        int idOfCityToBeDeleted = weatherItem.getId();
                         LocalDataClass.getInstance().deleteCityFromDatabase(mContext, idOfCityToBeDeleted);
-                        loadData();
+                        if (LocalDataClass.getInstance().getCityIdFromDatabase(mContext).equals("")) {
+                            weatherItems.clear();
+                            recyclerViewAdapter.notifyDataSetChanged();
+                            Toast.makeText(getContext(), databaseEmptyWarningText, Toast.LENGTH_SHORT).show();
+                        } else {
+                            loadData();
+                        }
                         return true;
                     }
                     return false;
                 });
-            }
-
-            @Override
-            public void recyclerViewItemViewClick(int position, ArrayList<WeatherModel.WeatherItem> weatherItemList) {
+            } else {
                 ListFragmentDirections.ActionListFragmentToCityDetailsFragment action =
                         ListFragmentDirections
-                                .actionListFragmentToCityDetailsFragment(weatherItemList.get(position).getName(),
-                                        (float) weatherItemList.get(position).getMain().getFeelsLike(),
-                                        (int) weatherItemList.get(position).getMain().getHumidity(),
-                                        (float) weatherItemList.get(position).getMain().getTemp(),
-                                        (float) weatherItemList.get(position).getCoord().getLon(),
-                                        (float) weatherItemList.get(position).getCoord().getLat());
-                Navigation.findNavController(getView()).navigate(action);
+                                .actionListFragmentToCityDetailsFragment(weatherItem.getName(),
+                                        (float) weatherItem.getMain().getFeelsLike(),
+                                        (int) weatherItem.getMain().getHumidity(),
+                                        (float) weatherItem.getMain().getTemp(),
+                                        (float) weatherItem.getCoord().getLon(),
+                                        (float) weatherItem.getCoord().getLat());
+                Navigation.findNavController(mView).navigate(action);
             }
         }, this.weatherItems);
-
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
@@ -175,12 +177,13 @@ public class ListFragment extends Fragment {
                 LocalDataClass.getInstance().writeData(secilenSehir.name, secilenSehir.id, getContext());
                 loadData();
             });
-            alertDialogBuilder.setNegativeButton("iptal", (dialog, which) -> {});
+            alertDialogBuilder.setNegativeButton("iptal", (dialog, which) -> {
+            });
             alertDialogBuilder.create().show();
         });
     }
 
-    private void spinnerConfigure(){
+    private void spinnerConfigure() {
         CityAPI cityAPI = CityService.getInstance().getRetrofit().create(CityAPI.class);
         Call<List<CityModel>> call = cityAPI.getData();
         call.enqueue(new Callback<List<CityModel>>() {
@@ -188,12 +191,14 @@ public class ListFragment extends Fragment {
             public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
 
                 if (response.isSuccessful()) {
-                    ArrayList<CityModel> cityList=new ArrayList<>();
-                    ArrayList<String> cityNameList=new ArrayList<>();
+                    ArrayList<CityModel> cityList = new ArrayList<>();
+                    ArrayList<String> cityNameList = new ArrayList<>();
 
-                    for (CityModel temp :response.body()) {
-                        cityList.add(temp);
-                        cityNameList.add(temp.name);
+                    if (response.body() != null) {
+                        for (CityModel temp : response.body()) {
+                            cityList.add(temp);
+                            cityNameList.add(temp.name);
+                        }
                     }
 
                     ArrayAdapter<String> spnAdapter = new ArrayAdapter<>(mContext, R.layout.spinner_tek_satir, cityNameList);
@@ -204,13 +209,16 @@ public class ListFragment extends Fragment {
                     searchableSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            secilenSehir=cityList.get(position);
+                            secilenSehir = cityList.get(position);
                         }
+
                         @Override
-                        public void onNothingSelected(AdapterView<?> parent) {}
+                        public void onNothingSelected(AdapterView<?> parent) {
+                        }
                     });
                 }
             }
+
             @Override
             public void onFailure(Call<List<CityModel>> call, Throwable t) {
                 t.printStackTrace();
