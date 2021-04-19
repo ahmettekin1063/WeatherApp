@@ -14,6 +14,11 @@ public class WeatherModel {
         private Main main;
         private Coord coord;
         private String name;
+        private int id;
+
+        public int getId() {
+            return id;
+        }
 
         public String getName() {
             return name;

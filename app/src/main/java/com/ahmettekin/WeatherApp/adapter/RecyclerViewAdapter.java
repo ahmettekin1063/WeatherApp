@@ -7,11 +7,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahmettekin.WeatherApp.R;
-import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
 import com.ahmettekin.WeatherApp.listener.RecyclerViewOnClickListener;
+import com.ahmettekin.WeatherApp.model.WeatherModel.WeatherItem;
 import com.ahmettekin.WeatherApp.utils.StringOperations;
 import com.squareup.picasso.Picasso;
 
@@ -45,11 +46,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.RowHolder holder, int position) {
         holder.bind(weatherItemList.get(position));
-        holder.itemView.setOnClickListener(v -> {
-            listener.recyclerViewItemViewClick(position, weatherItemList);
+        holder.itemView.setOnClickListener(view -> {
+            listener.recyclerViewItemViewClick(holder, weatherItemList.get(position),view);
         });
-        holder.deleteImage.setOnClickListener(v -> {
-            listener.recyclerViewDeleteClick(position, weatherItemList, holder.deleteImage);
+        holder.deleteImage.setOnClickListener(view -> {
+            listener.recyclerViewItemViewClick(holder, weatherItemList.get(position), view);
         });
     }
 
@@ -64,9 +65,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView tvSky;
         ImageView imageView;
         public ImageView deleteImage;
+        CardView cardView;
+        View itemView;
 
         public RowHolder(@NonNull View itemView) {
             super(itemView);
+            this.itemView=itemView;
         }
 
         public void bind(WeatherItem weatherItem) {
@@ -75,18 +79,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
 
         private void initViews() {
-            tvWeatherDescription = itemView.findViewById(R.id.tvWeatherDescription);
-            tvWeatherTemp = itemView.findViewById(R.id.tvWeatherTemp);
-            tvSky = itemView.findViewById(R.id.tvSky);
-            imageView = itemView.findViewById(R.id.imageView);
-            deleteImage = itemView.findViewById(R.id.deleteImage);
+            cardView=itemView.findViewById(R.id.cardView);
+            tvWeatherDescription = cardView.findViewById(R.id.tvCityName);
+            tvWeatherTemp = cardView.findViewById(R.id.tvWeatherTemp);
+            tvSky = cardView.findViewById(R.id.tvSky);
+            imageView = cardView.findViewById(R.id.imageView);
+            deleteImage = cardView.findViewById(R.id.deleteImage);
         }
 
         private void configureUI(WeatherItem weatherItem) {
             WeatherItem.Weather weatherObject;
             if (weatherItem.getWeathers().length > 0) {
                 weatherObject = weatherItem.getWeathers()[0];
-                itemView.setBackgroundResource(weatherObject.getSkyId());
+                cardView.setBackgroundResource(weatherObject.getSkyId());
                 tvSky.setText(MessageFormat.format("Gökyüzü : {0}", StringOperations.upperCaseWords(weatherObject.getDescription())));
                 String iconURL = HEAD_OF_ICON_PATH + weatherObject.getIcon() + END_OF_ICON_PATH;
                 Picasso.get().load(iconURL).into(imageView);

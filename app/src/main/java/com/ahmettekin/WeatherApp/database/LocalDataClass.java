@@ -15,7 +15,7 @@ public class LocalDataClass {
     private final String insertSqlTable = "INSERT INTO cities(id, cityname) VALUES (?, ?)";
     private final String columnIndexCityName = "cityname";
     private final String columnIndexCityId = "id";
-    private final String deleteSqlRecord = "DELETE FROM cities WHERE cityName=?";
+    private final String deleteSqlRecord = "DELETE FROM cities WHERE id=?";
     private final String alreadyExistSqlWarningText = "Şehir veritabanında zaten var";
     private static LocalDataClass localDataClass = null;
     private static final String cityAddedText = " şehri başarılı bir şekilde eklendi";
@@ -73,26 +73,11 @@ public class LocalDataClass {
         }
     }
 
-    public void deleteCityFromDatabase(Context context, String cityToBeDeleted) {
+    public void deleteCityFromDatabase(Context context, int cityIdToBeDeleted) {
         SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
         SQLiteStatement sqLiteStatement = database.compileStatement(deleteSqlRecord);
-        sqLiteStatement.bindString(1, String.valueOf(cityToBeDeleted));
+        sqLiteStatement.bindString(1, String.valueOf(cityIdToBeDeleted));
         sqLiteStatement.execute();
-    }
-
-    public void readDatabase(Context context) {
-        SQLiteDatabase database = context.openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
-        database.execSQL(createSqlTable);
-        Cursor cursor = database.rawQuery(strSqlQuery, null);
-
-        int cityNameIx = cursor.getColumnIndex(columnIndexCityName);
-        int idIx = cursor.getColumnIndex(columnIndexCityId);
-
-        while (cursor.moveToNext()) {
-            System.out.println("Id: " + cursor.getInt(idIx));
-            System.out.println("Şehir: " + cursor.getString(cityNameIx));
-        }
-        cursor.close();
     }
 
     public boolean databaseControl(String eklenecekSehir, Context context) {
