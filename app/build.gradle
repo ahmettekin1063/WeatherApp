@@ -16,6 +16,7 @@ detekt {
         sarif.enabled = true // standardized SARIF format (https://sarifweb.azurewebsites.net/) to support integrations with Github Code Scanning
     }
 }
+
 android {
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
