@@ -1,16 +1,14 @@
 package com.ahmettekin.weatherappkotlin.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ahmettekin.weatherappkotlin.R
+import com.ahmettekin.weatherappkotlin.databinding.RowLayoutBinding
 import com.ahmettekin.weatherappkotlin.getSkyImage
 import com.ahmettekin.weatherappkotlin.listener.RecyclerViewListener
 import com.ahmettekin.weatherappkotlin.model.WeatherModel
 import com.ahmettekin.weatherappkotlin.upperCaseWords
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.row_layout.view.*
 
 class RecyclerViewAdapter(private val myList: List<WeatherModel.WeatherItem>, private val listener:RecyclerViewListener) :
     RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>() {
@@ -18,25 +16,28 @@ class RecyclerViewAdapter(private val myList: List<WeatherModel.WeatherItem>, pr
     private val HEAD_OF_ICON_PATH = "https://openweathermap.org/img/wn/"
     private val END_OF_ICON_PATH = "@2x.png"
 
-    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class MyViewHolder(val binding: RowLayoutBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
+            RowLayoutBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         )
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.itemView.tvCityName.text = myList[position].name
-        holder.itemView.tvSky.text = myList[position].weather[0].description.upperCaseWords()
-        ("Sıcaklık: "+ myList[position].main.temp.toString()+DEGREE_SYMBOL).also { holder.itemView.tvWeatherTemp.text = it }
-        holder.itemView.cardView.setBackgroundResource(myList[position].getSkyImage())
-        Picasso.get().load(HEAD_OF_ICON_PATH + myList[position].weather[0].icon + END_OF_ICON_PATH).into(holder.itemView.imgWeatherSymbol)
-        holder.itemView.deleteImage.setOnClickListener {
-            listener.recyclerViewItemClick(myList[position],holder.itemView.deleteImage)
-        }
-        holder.itemView.setOnClickListener {
-            listener.recyclerViewItemClick(myList[position],null)
+        val bindedItem = myList[position]
+        holder.binding.apply {
+            tvCityName.text = bindedItem.name
+            tvSky.text = bindedItem.weather[0].description.upperCaseWords()
+            tvWeatherTemp.text = "Sıcaklık: "+ bindedItem.main.temp.toString()+DEGREE_SYMBOL
+            cardView.setBackgroundResource(bindedItem.getSkyImage())
+            Picasso.get().load(HEAD_OF_ICON_PATH + bindedItem.weather[0].icon + END_OF_ICON_PATH).into(this.imgWeatherSymbol)
+            deleteImage.setOnClickListener {
+                listener.recyclerViewItemClick(bindedItem,this.deleteImage)
+            }
+            root.setOnClickListener {
+                listener.recyclerViewItemClick(bindedItem,null)
+            }
         }
     }
 

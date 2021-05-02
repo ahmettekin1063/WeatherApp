@@ -8,20 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.ahmettekin.weatherappkotlin.R
+import com.ahmettekin.weatherappkotlin.databinding.CityDetailsFragmentBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.FirebaseApp
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import kotlinx.android.synthetic.main.city_details_fragment.*
 import java.text.MessageFormat
 
 class CityDetailsFragment : Fragment(),OnMapReadyCallback {
-
     private lateinit var imageRef: StorageReference
     private val VALUE_OF_ONE_MEGABYTE: Long = 1024 * 1024
     private var map: GoogleMap?=null
@@ -33,9 +31,11 @@ class CityDetailsFragment : Fragment(),OnMapReadyCallback {
     private val DEGREE_SYMBOL = "\u2103"
     private val VALUE_OF_ZOOM = 10f
     private lateinit var mMapView:MapView
+    private var binding: CityDetailsFragmentBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.city_details_fragment, container, false)
+        binding = CityDetailsFragmentBinding.inflate(inflater,container,false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,8 +51,8 @@ class CityDetailsFragment : Fragment(),OnMapReadyCallback {
         val feelsLike = CityDetailsFragmentArgs.fromBundle(requireArguments()).feelsLike
         val temp = CityDetailsFragmentArgs.fromBundle(requireArguments()).temp
         val nem = CityDetailsFragmentArgs.fromBundle(requireArguments()).nem
-        textView.text = cityName
-        textView2.text = MessageFormat.format("Sıcaklık: {0}{1}\nHissedilen sıcaklık: {2}{3}\nNem Değeri: %{4}", temp, DEGREE_SYMBOL, feelsLike, DEGREE_SYMBOL, nem)
+        binding?.textView?.text = cityName
+        binding?.textView2?.text = MessageFormat.format("Sıcaklık: {0}{1}\nHissedilen sıcaklık: {2}{3}\nNem Değeri: %{4}", temp, DEGREE_SYMBOL, feelsLike, DEGREE_SYMBOL, nem)
         setImageFromFirestore(cityName)
     }
 
@@ -68,7 +68,7 @@ class CityDetailsFragment : Fragment(),OnMapReadyCallback {
         imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(WEATHERAPP_IMAGE_PATH + cityName + IMAGE_FILE_EXTENSION)
         imageRef.getBytes(4 * VALUE_OF_ONE_MEGABYTE).addOnSuccessListener { bytes ->
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            imageView2.setImageBitmap(bitmap)
+            binding?.imageView2?.setImageBitmap(bitmap)
         }.addOnFailureListener {
             Log.e("Firebase Error:", "$it.localizedMessage")
         }
@@ -92,5 +92,10 @@ class CityDetailsFragment : Fragment(),OnMapReadyCallback {
     override fun onLowMemory() {
         mMapView.onLowMemory()
         super.onLowMemory()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 }
