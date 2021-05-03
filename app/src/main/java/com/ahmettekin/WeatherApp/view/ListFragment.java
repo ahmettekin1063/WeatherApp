@@ -41,9 +41,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -75,6 +72,7 @@ public class ListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
+        compositeDisposable = new CompositeDisposable();
         spinnerConfigure();
         configureListener();
         Gson gson = new GsonBuilder().setLenient().create();
@@ -98,7 +96,6 @@ public class ListFragment extends Fragment {
 
     private void loadData() {
         WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
-        compositeDisposable = new CompositeDisposable();
         String ids = LocalDataClass.getInstance().getCityIdFromDatabase(mContext);
         compositeDisposable.add(weatherAPI.getWeatherData(ids)
                 .subscribeOn(Schedulers.io())
@@ -185,44 +182,87 @@ public class ListFragment extends Fragment {
 
     private void spinnerConfigure() {
         CityAPI cityAPI = CityService.getInstance().getRetrofit().create(CityAPI.class);
-        Call<List<CityModel>> call = cityAPI.getData();
-        call.enqueue(new Callback<List<CityModel>>() {
-            @Override
-            public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
+        compositeDisposable.add(cityAPI.getData()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<List<CityModel>>() {
 
-                if (response.isSuccessful()) {
-                    ArrayList<CityModel> cityList = new ArrayList<>();
-                    ArrayList<String> cityNameList = new ArrayList<>();
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull List<CityModel> cityModels) {
+                        ArrayList<CityModel> cityList = new ArrayList<>();
+                        ArrayList<String> cityNameList = new ArrayList<>();
 
-                    if (response.body() != null) {
-                        for (CityModel temp : response.body()) {
+                        for (CityModel temp : cityModels) {
                             cityList.add(temp);
                             cityNameList.add(temp.name);
                         }
+
+                        ArrayAdapter<String> spnAdapter = new ArrayAdapter<>(mContext, R.layout.spinner_tek_satir, cityNameList);
+                        spnAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        searchableSpinner.setTitle("Şehir Seç");
+                        searchableSpinner.setPositiveButton("SEÇ");
+                        searchableSpinner.setAdapter(spnAdapter);
+                        searchableSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                secilenSehir = cityList.get(position);
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {}
+                        });
+
                     }
 
-                    ArrayAdapter<String> spnAdapter = new ArrayAdapter<>(mContext, R.layout.spinner_tek_satir, cityNameList);
-                    spnAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    searchableSpinner.setTitle("Şehir Seç");
-                    searchableSpinner.setPositiveButton("SEÇ");
-                    searchableSpinner.setAdapter(spnAdapter);
-                    searchableSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            secilenSehir = cityList.get(position);
-                        }
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
 
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<CityModel>> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+                    @Override
+                    public void onComplete() {
+                        Toast.makeText(mContext,"done!",Toast.LENGTH_SHORT).show();
+                    }
+                })
+        );
+        // Call<List<CityModel>> call = cityAPI.getData();
+        // call.enqueue(new Callback<List<CityModel>>() {
+        //     @Override
+        //     public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
+        //
+        //         if (response.isSuccessful()) {
+        //             ArrayList<CityModel> cityList = new ArrayList<>();
+        //             ArrayList<String> cityNameList = new ArrayList<>();
+        //
+        //             if (response.body() != null) {
+        //                 for (CityModel temp : response.body()) {
+        //                     cityList.add(temp);
+        //                     cityNameList.add(temp.name);
+        //                 }
+        //             }
+        //
+        //             ArrayAdapter<String> spnAdapter = new ArrayAdapter<>(mContext, R.layout.spinner_tek_satir, cityNameList);
+        //             spnAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //             searchableSpinner.setTitle("Şehir Seç");
+        //             searchableSpinner.setPositiveButton("SEÇ");
+        //             searchableSpinner.setAdapter(spnAdapter);
+        //             searchableSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        //                 @Override
+        //                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //                     secilenSehir = cityList.get(position);
+        //                 }
+        //
+        //                 @Override
+        //                 public void onNothingSelected(AdapterView<?> parent) {
+        //                 }
+        //             });
+        //         }
+        //     }
+        //
+        //     @Override
+        //     public void onFailure(Call<List<CityModel>> call, Throwable t) {
+        //         t.printStackTrace();
+        //     }
+        // });
     }
 }
