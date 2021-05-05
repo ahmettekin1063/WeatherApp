@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ahmettekin.weatherappkotlin.R
 import com.ahmettekin.weatherappkotlin.adapter.RecyclerViewAdapter
 import com.ahmettekin.weatherappkotlin.database.LocalDatabase
+import com.ahmettekin.weatherappkotlin.databinding.ActivityMainBinding
+import com.ahmettekin.weatherappkotlin.databinding.FragmentListBinding
 import com.ahmettekin.weatherappkotlin.listener.RecyclerViewListener
 import com.ahmettekin.weatherappkotlin.model.City
 import com.ahmettekin.weatherappkotlin.model.WeatherModel
@@ -32,7 +34,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_list.*
 
 class ListFragment : Fragment() {
     private lateinit var compositeDisposable: CompositeDisposable
@@ -45,11 +46,12 @@ class ListFragment : Fragment() {
     private lateinit var recyclerViewAdapter:RecyclerViewAdapter
     private val databaseEmptyWarningText = "veritabanı boş"
     private lateinit var mView: View
-
+    private var binding: FragmentListBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mContainer = container
-        return inflater.inflate(R.layout.fragment_list, container, false)
+        binding = FragmentListBinding.inflate(inflater, container,false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,7 +92,7 @@ class ListFragment : Fragment() {
     }
 
     private fun handleResponse(weatherModel: WeatherModel) {
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
         val myList= weatherModel.list as ArrayList
         recyclerViewAdapter= RecyclerViewAdapter(myList, object : RecyclerViewListener {
 
@@ -123,7 +125,7 @@ class ListFragment : Fragment() {
                 }
             }
         })
-        recyclerView.adapter=recyclerViewAdapter
+        binding?.recyclerView?.adapter=recyclerViewAdapter
     }
 
     private fun spinnerConfigure() {
@@ -161,7 +163,7 @@ class ListFragment : Fragment() {
     }
 
     private fun fabConfigure() {
-        fab.setOnClickListener {
+        binding?.fab?.setOnClickListener {
             val alertDialogBuilder = AlertDialog.Builder(mContext)
             alertView.removeFromSuperView()
             alertDialogBuilder.setMessage("Şehir Seçin")
@@ -189,4 +191,10 @@ class ListFragment : Fragment() {
         super.onStop()
         requestQueue?.cancelAll("JsonArrayRequest")
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
 }
