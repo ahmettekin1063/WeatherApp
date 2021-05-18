@@ -70,10 +70,10 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
     }
 
     private void configureUI() {
-        cityName = CityDetailsFragmentArgs.fromBundle(requireArguments()).getName();
-        float feelsLike = CityDetailsFragmentArgs.fromBundle(requireArguments()).getFeelsLike();
-        float temp = CityDetailsFragmentArgs.fromBundle(requireArguments()).getTemp();
-        int nem = CityDetailsFragmentArgs.fromBundle(requireArguments()).getNem();
+        cityName = CityDetailsFragmentArgs.fromBundle(requireArguments()).getWeatherItem().getName();
+        float feelsLike = (float) CityDetailsFragmentArgs.fromBundle(requireArguments()).getWeatherItem().getMain().getFeelsLike();
+        float temp = (float) CityDetailsFragmentArgs.fromBundle(requireArguments()).getWeatherItem().getMain().getTemp();
+        int nem = (int) CityDetailsFragmentArgs.fromBundle(requireArguments()).getWeatherItem().getMain().getHumidity();
         textView.setText(cityName);
         textView2.setText(MessageFormat.format("Sıcaklık: {0}{1}\nHissedilen sıcaklık: {2}{3}\nNem Değeri: %{4}", temp, DEGREE_SYMBOL, feelsLike, DEGREE_SYMBOL, nem));
         setImageFromFirestore(cityName);
@@ -81,8 +81,8 @@ public class CityDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        lon = CityDetailsFragmentArgs.fromBundle(requireArguments()).getLon();
-        lat = CityDetailsFragmentArgs.fromBundle(requireArguments()).getLat();
+        lon = (float) CityDetailsFragmentArgs.fromBundle(requireArguments()).getWeatherItem().getCoord().getLon();
+        lat = (float) CityDetailsFragmentArgs.fromBundle(requireArguments()).getWeatherItem().getCoord().getLat();
         map = googleMap;
         map.addMarker(new MarkerOptions().title(cityName).position(new LatLng(lat, lon)));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), VALUE_OF_ZOOM));

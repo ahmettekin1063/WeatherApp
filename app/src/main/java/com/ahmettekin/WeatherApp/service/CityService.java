@@ -8,13 +8,9 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CityService {
-    
     public static final String BASE_URL = "https://raw.githubusercontent.com/";
     private static CityService cityService = null;
     public static final String cityNotFoundText = "Aradığınız Şehir Bulunamadı";
-
-    private CityService() {
-    }
 
     public static CityService getInstance() {
         if (cityService == null) {

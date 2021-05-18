@@ -47,7 +47,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.RowHolder holder, int position) {
         holder.bind(weatherItemList.get(position));
         holder.itemView.setOnClickListener(view -> {
-            listener.recyclerViewItemViewClick(holder, weatherItemList.get(position),view);
+            listener.recyclerViewItemViewClick(holder, weatherItemList.get(position), view);
         });
         holder.deleteImage.setOnClickListener(view -> {
             listener.recyclerViewItemViewClick(holder, weatherItemList.get(position), view);
@@ -60,17 +60,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public class RowHolder extends RecyclerView.ViewHolder {
-        TextView tvWeatherDescription;
-        TextView tvWeatherTemp;
-        TextView tvSky;
-        ImageView imageView;
+        private TextView tvWeatherDescription;
+        private TextView tvWeatherTemp;
+        private TextView tvSky;
+        private ImageView imageView;
         public ImageView deleteImage;
-        CardView cardView;
-        View itemView;
+        private CardView cardView;
+        private View itemView;
 
         public RowHolder(@NonNull View itemView) {
             super(itemView);
-            this.itemView=itemView;
+            this.itemView = itemView;
         }
 
         public void bind(WeatherItem weatherItem) {
@@ -79,7 +79,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
 
         private void initViews() {
-            cardView=itemView.findViewById(R.id.cardView);
+            cardView = itemView.findViewById(R.id.cardView);
             tvWeatherDescription = cardView.findViewById(R.id.tvCityName);
             tvWeatherTemp = cardView.findViewById(R.id.tvWeatherTemp);
             tvSky = cardView.findViewById(R.id.tvSky);

@@ -1,4 +1,4 @@
-package com.ahmettekin.WeatherApp.database;
+package com.ahmettekin.WeatherApp.utils;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class LocalDataClass {
+public class DatabaseHelper {
     private final String strSqlQuery = "SELECT * FROM cities";
     private final String databaseName = "Cities";
     private final String createSqlTable = "CREATE TABLE IF NOT EXISTS cities(id INTEGER, cityname VARCHAR)";
@@ -17,17 +17,14 @@ public class LocalDataClass {
     private final String columnIndexCityId = "id";
     private final String deleteSqlRecord = "DELETE FROM cities WHERE id=?";
     private final String alreadyExistSqlWarningText = "Şehir veritabanında zaten var";
-    private static LocalDataClass localDataClass = null;
+    private static DatabaseHelper databaseHelper = null;
     private static final String cityAddedText = " şehri başarılı bir şekilde eklendi";
 
-    private LocalDataClass() {
-    }
-
-    public static LocalDataClass getInstance() {
-        if (localDataClass == null) {
-            localDataClass = new LocalDataClass();
+    public static DatabaseHelper getInstance() {
+        if (databaseHelper == null) {
+            databaseHelper = new DatabaseHelper();
         }
-        return localDataClass;
+        return databaseHelper;
     }
 
     public String getCityIdFromDatabase(Context context) {

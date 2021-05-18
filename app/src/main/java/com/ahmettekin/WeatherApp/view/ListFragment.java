@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahmettekin.WeatherApp.R;
 import com.ahmettekin.WeatherApp.adapter.RecyclerViewAdapter;
-import com.ahmettekin.WeatherApp.database.LocalDataClass;
+import com.ahmettekin.WeatherApp.utils.DatabaseHelper;
 import com.ahmettekin.WeatherApp.model.CityModel;
 import com.ahmettekin.WeatherApp.model.WeatherModel;
 import com.ahmettekin.WeatherApp.service.CityAPI;
@@ -96,7 +96,7 @@ public class ListFragment extends Fragment {
 
     private void loadData() {
         WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
-        String ids = LocalDataClass.getInstance().getCityIdFromDatabase(mContext);
+        String ids = DatabaseHelper.getInstance().getCityIdFromDatabase(mContext);
         compositeDisposable.add(weatherAPI.getWeatherData(ids)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -132,8 +132,8 @@ public class ListFragment extends Fragment {
                 popup.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.action_delete) {
                         int idOfCityToBeDeleted = weatherItem.getId();
-                        LocalDataClass.getInstance().deleteCityFromDatabase(mContext, idOfCityToBeDeleted);
-                        if (LocalDataClass.getInstance().getCityIdFromDatabase(mContext).equals("")) {
+                        DatabaseHelper.getInstance().deleteCityFromDatabase(mContext, idOfCityToBeDeleted);
+                        if (DatabaseHelper.getInstance().getCityIdFromDatabase(mContext).equals("")) {
                             weatherItems.clear();
                             recyclerViewAdapter.notifyDataSetChanged();
                             Toast.makeText(getContext(), databaseEmptyWarningText, Toast.LENGTH_SHORT).show();
@@ -147,12 +147,7 @@ public class ListFragment extends Fragment {
             } else {
                 ListFragmentDirections.ActionListFragmentToCityDetailsFragment action =
                         ListFragmentDirections
-                                .actionListFragmentToCityDetailsFragment(weatherItem.getName(),
-                                        (float) weatherItem.getMain().getFeelsLike(),
-                                        (int) weatherItem.getMain().getHumidity(),
-                                        (float) weatherItem.getMain().getTemp(),
-                                        (float) weatherItem.getCoord().getLon(),
-                                        (float) weatherItem.getCoord().getLat());
+                                .actionListFragmentToCityDetailsFragment(weatherItem);
                 Navigation.findNavController(mView).navigate(action);
             }
         }, this.weatherItems);
@@ -171,7 +166,7 @@ public class ListFragment extends Fragment {
             ViewOperations.removeFromSuperView((ViewGroup) alertDesign);
             alertDialogBuilder.setView(alertDesign);
             alertDialogBuilder.setPositiveButton("Kaydet", (dialog, which) -> {
-                LocalDataClass.getInstance().writeData(secilenSehir.name, secilenSehir.id, getContext());
+                DatabaseHelper.getInstance().writeData(secilenSehir.name, secilenSehir.id, getContext());
                 loadData();
             });
             alertDialogBuilder.setNegativeButton("iptal", (dialog, which) -> {
@@ -182,7 +177,7 @@ public class ListFragment extends Fragment {
 
     private void spinnerConfigure() {
         CityAPI cityAPI = CityService.getInstance().getRetrofit().create(CityAPI.class);
-        compositeDisposable.add(cityAPI.getData()
+        compositeDisposable.add(cityAPI.getCities()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<List<CityModel>>() {
@@ -209,7 +204,8 @@ public class ListFragment extends Fragment {
                             }
 
                             @Override
-                            public void onNothingSelected(AdapterView<?> parent) {}
+                            public void onNothingSelected(AdapterView<?> parent) {
+                            }
                         });
 
                     }
@@ -221,48 +217,9 @@ public class ListFragment extends Fragment {
 
                     @Override
                     public void onComplete() {
-                        Toast.makeText(mContext,"done!",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "done!", Toast.LENGTH_SHORT).show();
                     }
                 })
         );
-        // Call<List<CityModel>> call = cityAPI.getData();
-        // call.enqueue(new Callback<List<CityModel>>() {
-        //     @Override
-        //     public void onResponse(Call<List<CityModel>> call, Response<List<CityModel>> response) {
-        //
-        //         if (response.isSuccessful()) {
-        //             ArrayList<CityModel> cityList = new ArrayList<>();
-        //             ArrayList<String> cityNameList = new ArrayList<>();
-        //
-        //             if (response.body() != null) {
-        //                 for (CityModel temp : response.body()) {
-        //                     cityList.add(temp);
-        //                     cityNameList.add(temp.name);
-        //                 }
-        //             }
-        //
-        //             ArrayAdapter<String> spnAdapter = new ArrayAdapter<>(mContext, R.layout.spinner_tek_satir, cityNameList);
-        //             spnAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //             searchableSpinner.setTitle("Şehir Seç");
-        //             searchableSpinner.setPositiveButton("SEÇ");
-        //             searchableSpinner.setAdapter(spnAdapter);
-        //             searchableSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-        //                 @Override
-        //                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //                     secilenSehir = cityList.get(position);
-        //                 }
-        //
-        //                 @Override
-        //                 public void onNothingSelected(AdapterView<?> parent) {
-        //                 }
-        //             });
-        //         }
-        //     }
-        //
-        //     @Override
-        //     public void onFailure(Call<List<CityModel>> call, Throwable t) {
-        //         t.printStackTrace();
-        //     }
-        // });
     }
 }
